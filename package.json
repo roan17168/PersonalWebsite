@@ -1,0 +1,21 @@
+{
+  "name": "roan-portfolio",
+  "version": "1.0.0",
+  "description": "Personal portfolio of Roan Detweiler-Bedell — CS @ UVM",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "deploy": "npm run build && gh-pages -d dist"
+  },
+  "devDependencies": {
+    "vite": "^5.4.0",
+    "gh-pages": "^6.1.0"
+  },
+  "dependencies": {
+    "gsap": "^3.12.5"
+  },
+  "author": "Roan Detweiler-Bedell",
+  "license": "MIT"
+}

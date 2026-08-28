@@ -1,0 +1,24 @@
+{
+  "categories": [
+    {
+      "name": "Languages",
+      "icon": "code",
+      "items": ["Python", "Java", "C++", "C#", "MATLAB", "JavaScript"]
+    },
+    {
+      "name": "Tools & Platforms",
+      "icon": "wrench",
+      "items": ["Git", "Visual Studio", "Arduino IDE", "DaVinci Resolve", "Unity"]
+    },
+    {
+      "name": "Concepts",
+      "icon": "brain",
+      "items": ["Object-Oriented Programming", "Hardware-Software Integration", "Prototyping", "Web Development"]
+    },
+    {
+      "name": "Spoken Languages",
+      "icon": "globe",
+      "items": ["English (Native)", "Spanish (Proficient)"]
+    }
+  ]
+}

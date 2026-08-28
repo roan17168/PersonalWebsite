@@ -1,0 +1,72 @@
+{
+  "name": "Roan Detweiler-Bedell",
+  "location": "Lake Oswego, OR ↔ Burlington, VT",
+  "email": "roan17168@gmail.com",
+  "phone": "(503) 850-8382",
+  "address": "17168 Fernwood Drive, Lake Oswego, OR 97034",
+  "tagline": "CS student at UVM building interactive tools, hardware integrations, and games.",
+  "status": "Available for summer 2026 internships",
+  "education": [
+    {
+      "school": "University of Vermont",
+      "degree": "BSc in Computer Science",
+      "location": "Burlington, VT",
+      "startDate": "Aug 2025",
+      "endDate": "May 2026",
+      "details": [
+        "Accelerated Master's Track",
+        "Honors College",
+        "GPA: 3.73 (President's List)"
+      ]
+    }
+  ],
+  "experience": [
+    {
+      "company": "Drone Amplified",
+      "role": "Software Intern",
+      "location": "Lincoln, NE",
+      "startDate": "Jun 2025",
+      "endDate": "Aug 2025",
+      "description": "Assembled, tested, and evaluated drone systems and payloads designed for wildfire mitigation. Coded circuit boards for quality testing using Arduino and C++."
+    },
+    {
+      "company": "Palisades World Language School",
+      "role": "Cadet Teacher",
+      "location": "Lake Oswego, OR",
+      "startDate": "Jan 2022",
+      "endDate": "Jan 2023",
+      "description": "Used 12 years of Spanish fluency to teach elementary students. Developed lesson plans, assisted teachers, and provided 1:1 tutoring."
+    },
+    {
+      "company": "Impact Action Sports",
+      "role": "Referee",
+      "location": "Tualatin, OR",
+      "startDate": "Jun 2024",
+      "endDate": "May 2025",
+      "description": "Developed strong interpersonal skills serving customers. Led sporting events and private parties."
+    }
+  ],
+  "awards": [
+    "National Society of Leadership and Success — UVM (2026)",
+    "AP Scholar with Distinction — College Board (2024, 2025)",
+    "Oregon Seal of Biliteracy in Spanish",
+    "National Honor Society — 3 year member",
+    "Spanish National Honor Society — 3 year member"
+  ],
+  "communityService": [
+    {
+      "org": "Down Syndrome Network of Oregon",
+      "dates": "Aug 2021 - Jun 2025",
+      "description": "Led sporting activities and supported teams. Raised funds through 50/50 raffles at Timbers soccer games. Organized parties."
+    },
+    {
+      "org": "Ronald McDonald House",
+      "dates": "Aug 2021 - Jun 2024",
+      "description": "Led meal preparation for families facing serious health threats. Made cards for patients and organized clothing for hospitalized children."
+    }
+  ],
+  "languages": [
+    { "name": "English", "level": "Native" },
+    { "name": "Spanish", "level": "Highly proficient (speaking + writing)" }
+  ]
+}

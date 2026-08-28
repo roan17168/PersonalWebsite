@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project — roan.db</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="src/css/main.css">
+    <link rel="stylesheet" href="src/css/glass.css">
+</head>
+<body class="project-viewer-body">
+    <div class="grid-bg" aria-hidden="true"></div>
+
+    <div id="nav-mount"></div>
+
+    <!-- Project header (populated by router.js) -->
+    <header class="project-header">
+        <div class="project-header-inner">
+            <a href="index.html" class="back-link mono">
+                <span class="arrow-left">←</span> back to work
+            </a>
+            <div class="project-meta">
+                <span class="mono" id="project-category"></span>
+                <span class="mono" id="project-year"></span>
+            </div>
+            <h1 class="project-title" id="project-title"></h1>
+            <p class="project-description" id="project-description"></p>
+            <div class="project-tech" id="project-tech"></div>
+            <div class="project-actions">
+                <button id="project-fullscreen" class="btn-primary">
+                    <span>Fullscreen</span>
+                    <span>⛶</span>
+                </button>
+                <a id="project-external" class="btn-secondary" href="#" target="_blank" rel="noopener">
+                    <span>Open in new tab</span>
+                    <span>↗</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Project embed area -->
+    <main class="project-embed">
+        <div class="project-frame-wrapper glass-panel">
+            <div class="frame-titlebar">
+                <div class="frame-dots">
+                    <span></span><span></span><span></span>
+                </div>
+                <span class="mono frame-url" id="frame-url"></span>
+            </div>
+            <div class="frame-body">
+                <iframe id="project-iframe" src="" title="Project preview" allow="fullscreen; gamepad; autoplay"></iframe>
+                <div class="frame-placeholder" id="frame-placeholder">
+                    <div class="placeholder-content">
+                        <h3 class="serif">Coming soon</h3>
+                        <p id="placeholder-message">This project isn't embeddable yet.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-mount"></div>
+
+    <script type="module" src="src/js/router.js"></script>
+</body>
+</html>

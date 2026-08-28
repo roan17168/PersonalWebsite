@@ -1,0 +1,209 @@
+/* ===================================================================
+   BENTO.CSS
+   Modular 6-column grid for the homepage project gallery.
+   Card sizes: large, medium, wide, tall, small.
+   =================================================================== */
+
+.bento {
+    position: relative;
+    z-index: 1;
+    padding: 6rem 0;
+}
+
+.bento-grid {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-auto-rows: 200px;
+    gap: 1rem;
+}
+
+/* ============ BASE CARD ============ */
+.bento-card {
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.75rem;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Mouse-tracked radial glow */
+.bento-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+        circle at var(--mx, 50%) var(--my, 50%),
+        var(--accent-glow) 0%,
+        transparent 40%
+    );
+    opacity: 0;
+    transition: opacity 0.4s;
+    pointer-events: none;
+}
+
+.bento-card:hover {
+    border-color: var(--border-bright);
+    transform: translateY(-4px);
+    background: var(--surface-hover);
+}
+.bento-card:hover::before { opacity: 1; }
+
+/* ============ SIZE VARIANTS ============ */
+.bento-card[data-size="large"]  { grid-column: span 4; grid-row: span 2; }
+.bento-card[data-size="medium"] { grid-column: span 3; grid-row: span 2; }
+.bento-card[data-size="wide"]   { grid-column: span 4; grid-row: span 1; }
+.bento-card[data-size="tall"]   { grid-column: span 2; grid-row: span 2; }
+.bento-card[data-size="small"]  { grid-column: span 2; grid-row: span 1; }
+
+/* ============ CARD INTERNALS ============ */
+.card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.card-category {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-faint);
+    padding: 0.25rem 0.6rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+}
+
+.card-year {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--text-faint);
+}
+
+.card-title {
+    font-family: var(--serif);
+    font-size: clamp(1.5rem, 2.5vw, 2.25rem);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.75rem;
+    color: var(--text);
+    font-weight: 400;
+}
+
+.card-desc {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    line-height: 1.5;
+    margin-bottom: 1rem;
+}
+
+.card-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.card-tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.card-tech span {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    padding: 0.2rem 0.5rem;
+    background: var(--bg-elevated);
+    border-radius: 4px;
+}
+
+.card-cta {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--accent);
+    font-weight: 600;
+    transition: gap 0.3s;
+}
+
+.bento-card:hover .card-cta { gap: 0.75rem; }
+
+.card-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.25rem 0.6rem;
+    background: rgba(196, 255, 61, 0.1);
+    border: 1px solid var(--accent-dim);
+    border-radius: 999px;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--accent);
+}
+
+.card-status.coming-soon {
+    background: rgba(251, 191, 36, 0.1);
+    border-color: rgba(251, 191, 36, 0.4);
+    color: #fbbf24;
+}
+
+/* ============ SPECIAL CARD VARIANTS ============ */
+
+/* Featured — the hero project (Stickman) */
+.bento-card.feature {
+    background: linear-gradient(135deg, var(--surface) 0%, var(--bg-elevated) 100%);
+    border-color: var(--border-bright);
+}
+
+.bento-card.feature .card-title {
+    font-size: clamp(2rem, 3.5vw, 3rem);
+}
+
+/* Contact card — flips to accent color */
+.bento-card.contact-card {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+}
+.bento-card.contact-card .card-title,
+.bento-card.contact-card .card-desc,
+.bento-card.contact-card .card-cta { color: var(--bg); }
+.bento-card.contact-card .card-category {
+    background: rgba(10, 10, 11, 0.15);
+    color: var(--bg);
+    border-color: rgba(10, 10, 11, 0.2);
+}
+.bento-card.contact-card::before { display: none; }
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 900px) {
+    .bento-grid {
+        grid-template-columns: repeat(2, 1fr);
+        grid-auto-rows: 180px;
+    }
+
+    .bento-card[data-size="large"],
+    .bento-card[data-size="medium"],
+    .bento-card[data-size="wide"] { grid-column: span 2; }
+
+    .bento-card[data-size="tall"],
+    .bento-card[data-size="small"] { grid-column: span 1; }
+}

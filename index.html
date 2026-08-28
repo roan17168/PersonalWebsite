@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roan Detweiler-Bedell — CS @ UVM</title>
+    <meta name="description" content="Portfolio of Roan Detweiler-Bedell. Computer Science student at University of Vermont. C++, Unity, Arduino, and web development.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Stylesheets (modular) -->
+    <link rel="stylesheet" href="src/css/main.css">
+    <link rel="stylesheet" href="src/css/glass.css">
+    <link rel="stylesheet" href="src/css/bento.css">
+</head>
+<body>
+    <div class="grid-bg" aria-hidden="true"></div>
+
+    <!-- NAV: injected by app.js from src/components/nav.html -->
+    <div id="nav-mount"></div>
+
+    <!-- HERO -->
+    <header class="hero" id="about">
+        <div class="hero-meta glass-pill">
+            <span class="meta-dot"></span>
+            <span class="mono">available for summer 2026 internships</span>
+        </div>
+
+        <h1 class="hero-title">
+            <span class="line" data-line="1">Roan</span>
+            <span class="line italic" data-line="2">Detweiler-</span>
+            <span class="line" data-line="3">Bedell.</span>
+        </h1>
+
+        <div class="hero-sub">
+            <p class="hero-tagline">
+                CS student at <span class="highlight">UVM</span> building
+                <span class="italic serif">interactive tools</span>,
+                <span class="italic serif">hardware integrations</span>, and
+                <span class="italic serif">games</span> — from Arduino circuits to Unity engines.
+            </p>
+        </div>
+
+        <div class="hero-terminal">
+            <span class="prompt">roan@uvm</span>
+            <span class="tilde">~</span>
+            <span class="cmd">whoami</span>
+            <span class="output" id="typed-output"></span>
+            <span class="cursor">▊</span>
+        </div>
+    </header>
+
+    <!-- WORK / BENTO GRID -->
+    <main class="bento" id="work">
+        <div class="section-label">
+            <span class="mono">// section 01</span>
+            <h2>Selected work</h2>
+        </div>
+        <div class="bento-grid" id="project-grid"></div>
+    </main>
+
+    <!-- STACK -->
+    <section class="stack-section" id="stack">
+        <div class="section-label">
+            <span class="mono">// section 02</span>
+            <h2>The stack</h2>
+        </div>
+        <div class="stack-grid" id="stack-grid"></div>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section class="experience" id="experience">
+        <div class="section-label">
+            <span class="mono">// section 03</span>
+            <h2>Experience</h2>
+        </div>
+        <div class="timeline" id="timeline"></div>
+    </section>
+
+    <!-- FOOTER: injected from src/components/footer.html -->
+    <div id="footer-mount"></div>
+
+    <!-- Scripts (loaded as modules) -->
+    <script type="module" src="src/js/app.js"></script>
+</body>
+</html>
