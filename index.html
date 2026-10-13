@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Roan Detweiler-Bedell — CS @ Westminster University</title>
     <meta name="description" content="Portfolio of Roan Detweiler-Bedell. Computer Science student at Westminster University designing websites, hardware, and games — from Arduino circuits to Unity engines.">
-
+     <!-- Favicon (Minimal SVG Mark matching --accent #c4ff3d) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230a0a0b'/><path d='M16 4 L28 16 L16 28 L4 16 Z' fill='%23c4ff3d'/></svg>">
+    
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,11 +24,43 @@
     <!-- NAV: injected by app.js from src/components/nav.html -->
     <div id="nav-mount"></div>
 
+    <!-- FLOATING RIGHT SIDE INDEX -->
+    <aside class="floating-index" aria-label="Page section navigation">
+        <div class="index-rail"></div>
+        <nav class="index-nav">
+            <a href="#about" class="index-item active" data-target="about">
+                <span class="index-num mono">00</span>
+                <span class="index-label mono">about</span>
+                <span class="index-indicator"></span>
+            </a>
+            <a href="#work" class="index-item" data-target="work">
+                <span class="index-num mono">01</span>
+                <span class="index-label mono">work</span>
+                <span class="index-indicator"></span>
+            </a>
+            <a href="#stack" class="index-item" data-target="stack">
+                <span class="index-num mono">02</span>
+                <span class="index-label mono">stack</span>
+                <span class="index-indicator"></span>
+            </a>
+            <a href="#experience" class="index-item" data-target="experience">
+                <span class="index-num mono">03</span>
+                <span class="index-label mono">timeline</span>
+                <span class="index-indicator"></span>
+            </a>
+            <a href="#contact" class="index-item" data-target="contact">
+                <span class="index-num mono">04</span>
+                <span class="index-label mono">contact</span>
+                <span class="index-indicator"></span>
+            </a>
+        </nav>
+    </aside>
+    
     <!-- HERO -->
     <header class="hero" id="about">
         <div class="hero-meta glass-pill">
             <span class="meta-dot"></span>
-            <span class="mono">available for summer 2026 internships and more</span>
+            <span class="mono">available for software engineering & AI internships</span>
         </div>
 
         <h1 class="hero-title">
@@ -37,10 +71,10 @@
 
         <div class="hero-sub">
             <p class="hero-tagline">
-                CS student at <span class="highlight">Westminster</span> building
-                <span class="italic serif">interactive tools</span>,
-                <span class="italic serif">web development</span>, and
-                <span class="italic serif">games</span> — from Arduino circuits to Unity engines.
+                CS student at <span class="highlight">Westminster University</span> curating
+                <span class="italic serif">autonomous agent pipelines</span>,
+                <span class="italic serif">responsive web systems</span>, and
+                <span class="italic serif">interactive applications</span>.
             </p>
         </div>
 
