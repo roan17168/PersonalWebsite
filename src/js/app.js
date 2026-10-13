@@ -143,31 +143,29 @@ function initCardTracking() {
     });
 }
 
-/* -------- Main init -------- */
 document.addEventListener('DOMContentLoaded', async () => {
-    // 1. Load reusable components
-    await Promise.all([
-        loadComponent('nav-mount', 'src/components/nav.html'),
-        loadComponent('footer-mount', 'src/components/footer.html')
+    // 1. Load components concurrently (safe with fallbacks)
+    await Promise.allSettled([
+        loadComponent('nav-mount', './src/components/nav.html'),
+        loadComponent('footer-mount', './src/components/footer.html')
     ]);
 
-    // 2. Fetch all data files in parallel
+    // 2. Fetch JSON data files concurrently
     const [projects, skills, resume] = await Promise.all([
-        loadJSON('data/projects.json'),
-        loadJSON('data/skills.json'),
-        loadJSON('data/resume.json')
+        loadJSON('./data/projects.json'),
+        loadJSON('./data/skills.json'),
+        loadJSON('./data/resume.json')
     ]);
 
-    // 3. Render dynamic sections
-    if (projects) renderProjects(projects, 'project-grid');
-    if (skills)   renderStack(skills, 'stack-grid');
-    if (resume)   renderTimeline(resume, 'timeline');
+    // 3. Render all sections
+    if (projects && typeof renderProjects === 'function') renderProjects(projects, 'project-grid');
+    if (skills && typeof renderStack === 'function') renderStack(skills, 'stack-grid');
+    if (resume && typeof renderExperience === 'function') renderExperience(resume, 'timeline');
 
-    // 4. Kick off theme + animations + interactions
-    initTheme();
-    initTerminalTyping();
-    initCardTracking();
-    initAnimations();
+    // 4. Initialize interactions
+    if (typeof initTerminalTyping === 'function') initTerminalTyping();
+    if (typeof initCardTracking === 'function') initCardTracking();
+    if (typeof initIndexObserver === 'function') initIndexObserver();
 });
 
 /* ============ RIGHT-SIDE FLOATING INDEX OBSERVER ============ */
