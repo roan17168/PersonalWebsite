@@ -3,22 +3,22 @@
     {
       "name": "Languages",
       "icon": "code",
-      "items": ["Python", "Java", "C++", "C#", "MATLAB", "JavaScript"]
+      "items": ["html", "c", "css", "Xcode", "Python", "Java", "C++", "C#", "MATLAB", "JavaScript"]
     },
     {
       "name": "Tools & Platforms",
       "icon": "wrench",
-      "items": ["Git", "Visual Studio", "Arduino IDE", "DaVinci Resolve", "Unity"]
+      "items": ["Git", "Visual Studio", "MySQL", "WireShark", "Docker", "Command Line", "Arduino IDE", "DaVinci Resolve", "Unity"]
     },
     {
       "name": "Concepts",
       "icon": "brain",
-      "items": ["Object-Oriented Programming", "Hardware-Software Integration", "Prototyping", "Web Development"]
+      "items": ["Web Development", "Agentic Workflow", "Large Language Models", "Databases", "Object-Oriented Programming", "Hardware-Software Integration", "Prototyping" ]
     },
     {
       "name": "Spoken Languages",
       "icon": "globe",
-      "items": ["English (Native)", "Spanish (Proficient)"]
+      "items": ["English (Native)", "Spanish (Fluent)"]
     }
   ]
 }
