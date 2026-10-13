@@ -7,7 +7,6 @@
   "tagline": "CS student at UVM building interactive tools, hardware integrations, and games.",
   "status": "Available for summer 2026 internships",
   "education": [
-    [
   {
     "date": "Aug 2025 — Present",
     "title": "Westminster University",
@@ -19,7 +18,9 @@
     "title": "University of Vermont",
     "role": "Computer Science · President's List",
     "description": "Completed foundational CS coursework in data structures, systems, and accelerated software development with President's List honors prior to transferring."
-  },
+  }
+  ],
+   "experience": [
   {
     "date": "May 2026 — Aug 2026",
     "title": "Voicyd Web Infrastructure",
