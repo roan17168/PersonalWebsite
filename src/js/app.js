@@ -34,9 +34,9 @@ async function loadJSON(path) {
 
 /* -------- Terminal typing animation -------- */
 const TERMINAL_LINES = [
-    ' CS @ UVM, hardware + software',
-    ' building interactive experiences',
-    ' currently: exploring WebGL + game dev'
+    ' BS in Computer Science by Spring 2028',
+    ' Curating local agent pipelines for autonomous code auditors',
+    ' Building responsive client architectures & web games'
 ];
 
 function initTerminalTyping() {
