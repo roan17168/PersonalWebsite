@@ -112,3 +112,35 @@ document.addEventListener('DOMContentLoaded', async () => {
     initCardTracking();
     initAnimations();
 });
+
+/* ============ RIGHT-SIDE FLOATING INDEX OBSERVER ============ */
+function initIndexObserver() {
+    const sections = document.querySelectorAll('header[id], main[id], section[id], footer[id]');
+    const navItems = document.querySelectorAll('.index-item');
+    if (!sections.length || !navItems.length) return;
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const id = entry.target.getAttribute('id');
+                navItems.forEach(item => {
+                    if (item.getAttribute('data-target') === id) {
+                        item.classList.add('active');
+                    } else {
+                        item.classList.remove('active');
+                    }
+                });
+            }
+        });
+    }, {
+        threshold: 0.35,
+        rootMargin: '-10% 0px -40% 0px'
+    });
+
+    sections.forEach(sec => observer.observe(sec));
+}
+
+// Call on startup
+document.addEventListener('DOMContentLoaded', () => {
+    initIndexObserver();
+});
