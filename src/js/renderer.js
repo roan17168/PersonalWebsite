@@ -96,27 +96,11 @@ export function renderExperience(resumeData, mountId = 'timeline') {
 
     let html = '';
 
-    // 1. Education Section
-    if (resumeData.education && resumeData.education.length) {
-        html += `
-            <div class="timeline-category mono">// Education</div>
-            ${resumeData.education.map(item => `
-                <div class="timeline-item fade-in">
-                    <div class="timeline-date mono">${item.date || ''}</div>
-                    <div class="timeline-content">
-                        <h3>${item.title || item.school || ''}</h3>
-                        <span class="role mono">${item.role || ''}</span>
-                        <p>${item.description || ''}</p>
-                    </div>
-                </div>
-            `).join('')}
-        `;
-    }
 
     // 2. Experience Section
     if (resumeData.experience && resumeData.experience.length) {
         html += `
-            <div class="timeline-category mono" style="margin-top: 3rem;">// Experience</div>
+            <div class="timeline-category mono">// Experience</div>
             ${resumeData.experience.map(item => `
                 <div class="timeline-item fade-in">
                     <div class="timeline-date mono">${item.date || (item.startDate ? `${item.startDate} — ${item.endDate || 'Present'}` : '')}</div>
