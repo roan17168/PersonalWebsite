@@ -90,7 +90,7 @@ export function renderStack(skillsData, mountId) {
 }
 
 /* ============ RENDER COMPLETE TIMELINE & RESUME DATA ============ */
-export function renderExperience(resumeData, mountId = 'timeline') {
+export function renderTimeline(resumeData, mountId = 'timeline') {
     const timeline = document.getElementById(mountId);
     if (!timeline || !resumeData) return;
 
