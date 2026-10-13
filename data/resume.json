@@ -7,28 +7,31 @@
   "tagline": "CS student at UVM building interactive tools, hardware integrations, and games.",
   "status": "Available for summer 2026 internships",
   "education": [
-    {
-      "school": "University of Vermont",
-      "degree": "BSc in Computer Science",
-      "location": "Burlington, VT",
-      "startDate": "Aug 2025",
-      "endDate": "May 2026",
-      "details": [
-        "Accelerated Master's Track",
-        "Honors College",
-        "GPA: 3.73 (President's List)"
-      ]
-    }
-  ],
-  "experience": [
-    {
-      "company": "Drone Amplified",
-      "role": "Software Intern",
-      "location": "Lincoln, NE",
-      "startDate": "Jun 2025",
-      "endDate": "Aug 2025",
-      "description": "Assembled, tested, and evaluated drone systems and payloads designed for wildfire mitigation. Coded circuit boards for quality testing using Arduino and C++."
-    },
+    [
+  {
+    "date": "Aug 2025 — Present",
+    "title": "Westminster University",
+    "role": "BS in Computer Science · Salt Lake City, UT",
+    "description": "Pursuing BS in Computer Science (Expected Spring 2028). Recipient of a full-tuition Tuition Exchange (TE) Scholarship through Lewis & Clark College."
+  },
+  {
+    "date": "Aug 2024 — May 2025",
+    "title": "University of Vermont",
+    "role": "Computer Science · President's List",
+    "description": "Completed foundational CS coursework in data structures, systems, and accelerated software development with President's List honors prior to transferring."
+  },
+  {
+    "date": "May 2026 — Aug 2026",
+    "title": "Voicyd Web Infrastructure",
+    "role": "Full-Stack Migration & DevOps Lead",
+    "description": "Executed complete platform recovery and modernization across Rails 6.1 and Angular 9/Webpack architectures. Resolved legacy OpenSSL 3.0 incompatibility, resolved native gem dependencies (PostgreSQL/Nokogiri), repaired cookie session proxy handling, and restored AWS RDS data connectivity."
+  },
+  {
+    "date": "May 2025 — Aug 2025",
+    "title": "Drone Amplified",
+    "role": "Hardware & Firmware Intern · Lincoln, NE",
+    "description": "Assembled and evaluated drone avionics and payloads for wildfire mitigation. Programmed diagnostic circuit testing routines in C++ and Arduino."
+  },
     {
       "company": "Palisades World Language School",
       "role": "Cadet Teacher",
