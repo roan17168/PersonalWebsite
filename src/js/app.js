@@ -7,27 +7,84 @@ import { renderProjects, renderStack, renderTimeline } from './renderer.js';
 import { initAnimations } from './animations.js';
 import { initTheme } from './theme.js';
 
-/* -------- Load an HTML component into a mount point -------- */
+/* ============ RESILIENT COMPONENT LOADER ============ */
 async function loadComponent(mountId, componentPath) {
     const mount = document.getElementById(mountId);
     if (!mount) return;
+
+    // Normalize relative path to work in both root and repo subfolders
+    const cleanPath = componentPath.startsWith('./') ? componentPath : `./${componentPath}`;
+
     try {
-        const res = await fetch(componentPath);
-        if (!res.ok) throw new Error(`Failed to load ${componentPath}`);
+        const res = await fetch(cleanPath);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         mount.innerHTML = await res.text();
     } catch (err) {
-        console.error(err);
+        console.warn(`[Component Warning] Could not fetch ${cleanPath}, applying fallback markup.`, err);
+        
+        // Inline fallback so your site never breaks or stays blank
+        if (mountId === 'nav-mount') {
+            mount.innerHTML = `
+                <nav class="nav">
+                    <a href="index.html" class="nav-logo">
+                        <span class="logo-mark">◆</span>
+                        <span class="logo-text">roan.db</span>
+                    </a>
+                    <div class="nav-links">
+                        <a href="index.html#about">about</a>
+                        <a href="index.html#work">work</a>
+                        <a href="index.html#stack">stack</a>
+                        <a href="index.html#experience">experience</a>
+                        <a href="index.html#contact">contact</a>
+                        <a href="public/resume.pdf" class="nav-cta" download>
+                            <span>resume</span>
+                            <span class="arrow">↓</span>
+                        </a>
+                    </div>
+                </nav>
+            `;
+        } else if (mountId === 'footer-mount') {
+            mount.innerHTML = `
+                <footer class="contact" id="contact">
+                    <div class="contact-inner">
+                        <p class="mono contact-eyebrow">// let's build something</p>
+                        <h2 class="contact-title">Say <span class="italic serif">hello</span>.</h2>
+                        <div class="contact-links">
+                            <a href="mailto:roan17168@gmail.com" class="contact-link">
+                                <span class="link-label">email</span>
+                                <span class="link-value">roan17168@gmail.com</span>
+                                <span class="link-arrow">→</span>
+                            </a>
+                            <a href="https://github.com/roan-db" class="contact-link" target="_blank" rel="noopener">
+                                <span class="link-label">github</span>
+                                <span class="link-value">@roan-db</span>
+                                <span class="link-arrow">→</span>
+                            </a>
+                            <a href="https://linkedin.com/in/roan-detweiler-bedell" class="contact-link" target="_blank" rel="noopener">
+                                <span class="link-label">linkedin</span>
+                                <span class="link-value">roan-detweiler-bedell</span>
+                                <span class="link-arrow">→</span>
+                            </a>
+                        </div>
+                        <div class="footer-line">
+                            <span class="mono">© 2026 · Built from scratch · Salt Lake City, UT ↔ Lake Oswego, OR</span>
+                        </div>
+                    </div>
+                </footer>
+            `;
+        }
     }
 }
 
-/* -------- Fetch JSON data -------- */
+/* ============ RESILIENT JSON LOADER ============ */
 async function loadJSON(path) {
+    const cleanPath = path.startsWith('./') ? path : `./${path}`;
     try {
-        const res = await fetch(path);
-        if (!res.ok) throw new Error(`Failed to load ${path}`);
+        const res = await fetch(cleanPath);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return await res.json();
     } catch (err) {
-        console.error(err);
+        console.error(`Failed to load data from ${cleanPath}:`, err);
         return null;
     }
 }
