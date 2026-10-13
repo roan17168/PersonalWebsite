@@ -89,36 +89,77 @@ export function renderStack(skillsData, mountId) {
     `).join('');
 }
 
-/* -------- Render Experience Timeline -------- */
-export function renderTimeline(resume, mountId) {
+/* ============ RENDER COMPLETE TIMELINE & RESUME DATA ============ */
+export function renderExperience(resumeData, mountId = 'timeline') {
     const timeline = document.getElementById(mountId);
-    if (!timeline) return;
+    if (!timeline || !resumeData) return;
 
-    // Combine education + experience into a single chronological feed
-    const education = (resume.education || []).map(e => ({
-        date: `${e.startDate} — ${e.endDate}`,
-        title: e.school,
-        role: `${e.degree} · ${e.location}`,
-        description: (e.details || []).join(' · ')
-    }));
+    let html = '';
 
-    const experience = (resume.experience || []).map(x => ({
-        date: `${x.startDate} — ${x.endDate}`,
-        title: x.company,
-        role: `${x.role} · ${x.location}`,
-        description: x.description
-    }));
+    // 1. Education Section
+    if (resumeData.education && resumeData.education.length) {
+        html += `
+            <div class="timeline-category mono">// Education</div>
+            ${resumeData.education.map(item => `
+                <div class="timeline-item fade-in">
+                    <div class="timeline-date mono">${item.date || ''}</div>
+                    <div class="timeline-content">
+                        <h3>${item.title || item.school || ''}</h3>
+                        <span class="role mono">${item.role || ''}</span>
+                        <p>${item.description || ''}</p>
+                    </div>
+                </div>
+            `).join('')}
+        `;
+    }
 
-    const combined = [...experience, ...education];
+    // 2. Experience Section
+    if (resumeData.experience && resumeData.experience.length) {
+        html += `
+            <div class="timeline-category mono" style="margin-top: 3rem;">// Experience</div>
+            ${resumeData.experience.map(item => `
+                <div class="timeline-item fade-in">
+                    <div class="timeline-date mono">${item.date || (item.startDate ? `${item.startDate} — ${item.endDate || 'Present'}` : '')}</div>
+                    <div class="timeline-content">
+                        <h3>${item.title || item.company || ''}</h3>
+                        <span class="role mono">${item.role || ''}</span>
+                        <p>${item.description || ''}</p>
+                    </div>
+                </div>
+            `).join('')}
+        `;
+    }
 
-    timeline.innerHTML = combined.map(item => `
-        <div class="timeline-item fade-in">
-            <div class="timeline-date">${item.date}</div>
-            <div class="timeline-content">
-                <h3>${item.title}</h3>
-                <span class="role">${item.role}</span>
-                <p>${item.description}</p>
+    // 3. Honors & Awards Section
+    if (resumeData.awards && resumeData.awards.length) {
+        html += `
+            <div class="timeline-category mono" style="margin-top: 3rem;">// Honors & Awards</div>
+            <div class="timeline-item fade-in">
+                <div class="timeline-date mono">Honors</div>
+                <div class="timeline-content">
+                    <ul class="timeline-list">
+                        ${resumeData.awards.map(award => `<li>${award}</li>`).join('')}
+                    </ul>
+                </div>
             </div>
-        </div>
-    `).join('');
+        `;
+    }
+
+    // 4. Community Service Section
+    if (resumeData.communityService && resumeData.communityService.length) {
+        html += `
+            <div class="timeline-category mono" style="margin-top: 3rem;">// Community Service</div>
+            ${resumeData.communityService.map(service => `
+                <div class="timeline-item fade-in">
+                    <div class="timeline-date mono">${service.dates || ''}</div>
+                    <div class="timeline-content">
+                        <h3>${service.org || ''}</h3>
+                        <p>${service.description || ''}</p>
+                    </div>
+                </div>
+            `).join('')}
+        `;
+    }
+
+    timeline.innerHTML = html;
 }
