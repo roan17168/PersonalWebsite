@@ -3,7 +3,7 @@
    Loads component HTML, fetches JSON data, kicks off renderer + animations
    =================================================================== */
 
-import { renderProjects, renderStack, renderTimeline } from './renderer.js';
+import { renderProjects, renderStack, renderExperience } from './renderer.js';
 import { initAnimations } from './animations.js';
 import { initTheme } from './theme.js';
 
@@ -195,7 +195,34 @@ function initIndexObserver() {
     sections.forEach(sec => observer.observe(sec));
 }
 
-// Call on startup
-document.addEventListener('DOMContentLoaded', () => {
-    initIndexObserver();
+document.addEventListener('DOMContentLoaded', async () => {
+    // 1. Components — never block, never crash
+    await Promise.allSettled([
+        loadComponent('nav-mount', './src/components/nav.html'),
+        loadComponent('footer-mount', './src/components/footer.html')
+    ]);
+
+    // 2. Data
+    const [projects, skills, resume] = await Promise.all([
+        loadJSON('./data/projects.json'),
+        loadJSON('./data/skills.json'),
+        loadJSON('./data/resume.json')
+    ]);
+
+    // 3. Render — each guarded so one failure can't kill the rest
+    try { if (projects) renderProjects(projects, 'project-grid'); }
+    catch (e) { console.error('renderProjects failed:', e); }
+
+    try { if (skills) renderStack(skills, 'stack-grid'); }
+    catch (e) { console.error('renderStack failed:', e); }
+
+    try { if (resume) renderExperience(resume, 'timeline'); }
+    catch (e) { console.error('renderExperience failed:', e); }
+
+    // 4. Interactions
+    try { initTheme?.(); } catch (e) {}
+    try { initTerminalTyping?.(); } catch (e) {}
+    try { initCardTracking?.(); } catch (e) {}
+    try { initIndexObserver?.(); } catch (e) {}
+    try { initAnimations?.(); } catch (e) {}
 });
