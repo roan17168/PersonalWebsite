@@ -142,29 +142,39 @@ function initCardTracking() {
 
 /* ============ RIGHT-SIDE FLOATING INDEX OBSERVER ============ */
 function initIndexObserver() {
-    const sections = document.querySelectorAll('header[id], main[id], section[id], footer[id]');
+    const sections = [...document.querySelectorAll('header[id], main[id], section[id], footer[id]')];
     const navItems = document.querySelectorAll('.index-item');
     if (!sections.length || !navItems.length) return;
 
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const id = entry.target.getAttribute('id');
-                navItems.forEach(item => {
-                    if (item.getAttribute('data-target') === id) {
-                        item.classList.add('active');
-                    } else {
-                        item.classList.remove('active');
-                    }
-                });
-            }
+    function updateActiveSection() {
+        const marker = window.innerHeight * 0.4;
+        const activeSection = sections.find(section => {
+            const bounds = section.getBoundingClientRect();
+            return bounds.top <= marker && bounds.bottom > marker;
+        }) || sections.reduce((closest, section) => {
+            const closestDistance = Math.abs(closest.getBoundingClientRect().top - marker);
+            const sectionDistance = Math.abs(section.getBoundingClientRect().top - marker);
+            return sectionDistance < closestDistance ? section : closest;
         });
-    }, {
-        threshold: 0.35,
-        rootMargin: '-10% 0px -40% 0px'
-    });
 
-    sections.forEach(sec => observer.observe(sec));
+        navItems.forEach(item => {
+            item.classList.toggle('active', item.getAttribute('data-target') === activeSection.id);
+        });
+    }
+
+    let updatePending = false;
+    function scheduleUpdate() {
+        if (updatePending) return;
+        updatePending = true;
+        requestAnimationFrame(() => {
+            updatePending = false;
+            updateActiveSection();
+        });
+    }
+
+    window.addEventListener('scroll', scheduleUpdate, { passive: true });
+    window.addEventListener('resize', scheduleUpdate);
+    updateActiveSection();
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
