@@ -13,5 +13,28 @@
     "githubUrl": "https://roan17168.github.io/CarolDetweilerBook/",
     "liveUrl": "",
     "bentoSize": "medium"
+    },
+    {
+    "id": "AllInOne",
+    "title": "AllInOne",
+    "category": "Web / Interactive Games",
+    "featured": true,
+    "year": 2025,
+    "tech": [
+      "HTML5",
+      "CSS3 (Custom Properties)",
+      "JavaScript (ES6+)",
+      "Canvas API",
+      "Web Audio API",
+      "DeviceOrientation API",
+      "LocalStorage"
+    ],
+    "description": "Zero-backend, offline-ready party game platform featuring 50+ mobile arcade and tabletop games with custom physics and procedural audio.",
+    "longDescription": "A complete, dependency-free interactive game studio and party hub built for mobile and tabletop play. Features 50+ standalone game modules running 100% client-side, dynamic multi-palette CSS theming, Retina-scaled (DPR 2.5) HTML5 Canvas rendering, mathematical Bézier curve drawing smoothing, device orientation gyroscope tilt controls, zero-asset Web Audio API procedural sound synthesis, and an embedded in-app QA test rig and error-trapping engine for live runtime mobile diagnostics.",
+    "projectUrl": "https://roan17168.github.io/AllInOne/",
+    "type": "iframe",
+    "githubUrl": "https://github.com/roan17168/AllInOne",
+    "liveUrl": "",
+    "bentoSize": "medium"
   }
 ]
