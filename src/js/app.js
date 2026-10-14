@@ -5,7 +5,10 @@
 
 import { renderProjects, renderStack, renderExperience } from './renderer.js';
 import { initAnimations } from './animations.js';
-import { initTheme } from './theme.js';
+import projects from '../../data/projects.json';
+import pastProjects from '../../data/past-projects.json';
+import skills from '../../data/skills.json';
+import resume from '../../data/resume.json';
 
 /* ============ RESILIENT COMPONENT LOADER ============ */
 async function loadComponent(mountId, componentPath) {
@@ -25,23 +28,20 @@ async function loadComponent(mountId, componentPath) {
         // Inline fallback so your site never breaks or stays blank
         if (mountId === 'nav-mount') {
             mount.innerHTML = `
-                <nav class="nav">
-                    <a href="index.html" class="nav-logo">
-                        <span class="logo-mark">◆</span>
-                        <span class="logo-text">roan.db</span>
-                    </a>
-                    <div class="nav-links">
-                        <a href="index.html#about">about</a>
-                        <a href="index.html#work">work</a>
-                        <a href="index.html#stack">stack</a>
-                        <a href="index.html#experience">experience</a>
-                        <a href="index.html#contact">contact</a>
-                        <a href="public/resume.pdf" class="nav-cta" download>
-                            <span>resume</span>
-                            <span class="arrow">↓</span>
-                        </a>
-                    </div>
-                </nav>
+                <details class="mobile-section-nav">
+                    <summary class="mobile-nav-toggle">
+                        <span>Sections</span>
+                        <span class="mobile-nav-mark" aria-hidden="true"></span>
+                    </summary>
+                    <nav class="mobile-nav-panel" aria-label="Page sections">
+                        <a href="index.html#about">About</a>
+                        <a href="index.html#work">Current Projects</a>
+                        <a href="index.html#past-work">Past Projects</a>
+                        <a href="index.html#stack">Stack</a>
+                        <a href="index.html#experience">Experience</a>
+                        <a href="index.html#contact">Contact</a>
+                    </nav>
+                </details>
             `;
         } else if (mountId === 'footer-mount') {
             mount.innerHTML = `
@@ -55,14 +55,14 @@ async function loadComponent(mountId, componentPath) {
                                 <span class="link-value">roan17168@gmail.com</span>
                                 <span class="link-arrow">→</span>
                             </a>
-                            <a href="https://github.com/roan-db" class="contact-link" target="_blank" rel="noopener">
-                                <span class="link-label">github</span>
-                                <span class="link-value">@roan-db</span>
+                            <a href="mailto:rwd0519@westminsteru.edu" class="contact-link">
+                                <span class="link-label">edu email</span>
+                                <span class="link-value">rwd0519@westminsteru.edu</span>
                                 <span class="link-arrow">→</span>
                             </a>
-                            <a href="https://linkedin.com/in/roan-detweiler-bedell" class="contact-link" target="_blank" rel="noopener">
-                                <span class="link-label">linkedin</span>
-                                <span class="link-value">roan-detweiler-bedell</span>
+                            <a href="https://github.com/roan17168" class="contact-link" target="_blank" rel="noopener">
+                                <span class="link-label">github</span>
+                                <span class="link-value">@roan17168</span>
                                 <span class="link-arrow">→</span>
                             </a>
                         </div>
@@ -73,19 +73,6 @@ async function loadComponent(mountId, componentPath) {
                 </footer>
             `;
         }
-    }
-}
-
-/* ============ RESILIENT JSON LOADER ============ */
-async function loadJSON(path) {
-    const cleanPath = path.startsWith('./') ? path : `./${path}`;
-    try {
-        const res = await fetch(cleanPath);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return await res.json();
-    } catch (err) {
-        console.error(`Failed to load data from ${cleanPath}:`, err);
-        return null;
     }
 }
 
@@ -143,31 +130,6 @@ function initCardTracking() {
     });
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-    // 1. Load components concurrently (safe with fallbacks)
-    await Promise.allSettled([
-        loadComponent('nav-mount', './src/components/nav.html'),
-        loadComponent('footer-mount', './src/components/footer.html')
-    ]);
-
-    // 2. Fetch JSON data files concurrently
-    const [projects, skills, resume] = await Promise.all([
-        loadJSON('./data/projects.json'),
-        loadJSON('./data/skills.json'),
-        loadJSON('./data/resume.json')
-    ]);
-
-    // 3. Render all sections
-    if (projects && typeof renderProjects === 'function') renderProjects(projects, 'project-grid');
-    if (skills && typeof renderStack === 'function') renderStack(skills, 'stack-grid');
-    if (resume && typeof renderExperience === 'function') renderExperience(resume, 'timeline');
-
-    // 4. Initialize interactions
-    if (typeof initTerminalTyping === 'function') initTerminalTyping();
-    if (typeof initCardTracking === 'function') initCardTracking();
-    if (typeof initIndexObserver === 'function') initIndexObserver();
-});
-
 /* ============ RIGHT-SIDE FLOATING INDEX OBSERVER ============ */
 function initIndexObserver() {
     const sections = document.querySelectorAll('header[id], main[id], section[id], footer[id]');
@@ -198,20 +160,22 @@ function initIndexObserver() {
 document.addEventListener('DOMContentLoaded', async () => {
     // 1. Components — never block, never crash
     await Promise.allSettled([
-        loadComponent('nav-mount', './src/components/nav.html'),
-        loadComponent('footer-mount', './src/components/footer.html')
+        loadComponent('nav-mount', './components/nav.html'),
+        loadComponent('footer-mount', './components/footer.html')
     ]);
+    document.querySelectorAll('.mobile-nav-panel a').forEach(link => {
+        link.addEventListener('click', () => {
+            const menu = link.closest('.mobile-section-nav');
+            if (menu) menu.open = false;
+        });
+    });
 
-    // 2. Data
-    const [projects, skills, resume] = await Promise.all([
-        loadJSON('./data/projects.json'),
-        loadJSON('./data/skills.json'),
-        loadJSON('./data/resume.json')
-    ]);
-
-    // 3. Render — each guarded so one failure can't kill the rest
+    // Render each section independently so one failure cannot blank the rest.
     try { if (projects) renderProjects(projects, 'project-grid'); }
     catch (e) { console.error('renderProjects failed:', e); }
+
+    try { if (pastProjects) renderProjects(pastProjects, 'past-project-grid', false, 'small'); }
+    catch (e) { console.error('renderPastProjects failed:', e); }
 
     try { if (skills) renderStack(skills, 'stack-grid'); }
     catch (e) { console.error('renderStack failed:', e); }
@@ -220,7 +184,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     catch (e) { console.error('renderExperience failed:', e); }
 
     // 4. Interactions
-    try { initTheme?.(); } catch (e) {}
     try { initTerminalTyping?.(); } catch (e) {}
     try { initCardTracking?.(); } catch (e) {}
     try { initIndexObserver?.(); } catch (e) {}

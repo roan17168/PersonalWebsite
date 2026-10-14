@@ -21,7 +21,7 @@
 <body>
     <div class="grid-bg" aria-hidden="true"></div>
 
-    <!-- NAV: injected by app.js from src/components/nav.html -->
+    <!-- NAV: injected from public/components/nav.html -->
     <div id="nav-mount"></div>
 
     <!-- FLOATING RIGHT SIDE INDEX -->
@@ -38,18 +38,23 @@
                 <span class="index-label mono">work</span>
                 <span class="index-indicator"></span>
             </a>
-            <a href="#stack" class="index-item" data-target="stack">
+            <a href="#past-work" class="index-item" data-target="past-work">
                 <span class="index-num mono">02</span>
+                <span class="index-label mono">past work</span>
+                <span class="index-indicator"></span>
+            </a>
+            <a href="#stack" class="index-item" data-target="stack">
+                <span class="index-num mono">03</span>
                 <span class="index-label mono">stack</span>
                 <span class="index-indicator"></span>
             </a>
             <a href="#experience" class="index-item" data-target="experience">
-                <span class="index-num mono">03</span>
+                <span class="index-num mono">04</span>
                 <span class="index-label mono">timeline</span>
                 <span class="index-indicator"></span>
             </a>
             <a href="#contact" class="index-item" data-target="contact">
-                <span class="index-num mono">04</span>
+                <span class="index-num mono">05</span>
                 <span class="index-label mono">contact</span>
                 <span class="index-indicator"></span>
             </a>
@@ -91,15 +96,24 @@
     <main class="bento" id="work">
         <div class="section-label">
             <span class="mono">// section 01</span>
-            <h2>Selected work</h2>
+            <h2>Current Projects</h2>
         </div>
         <div class="bento-grid" id="project-grid"></div>
+    </main>
+
+    <!-- PAST PROJECTS / BENTO GRID -->
+    <main class="bento" id="past-work">
+        <div class="section-label">
+            <span class="mono">// section 02</span>
+            <h2>Past Projects</h2>
+        </div>
+        <div class="bento-grid" id="past-project-grid"></div>
     </main>
 
     <!-- STACK -->
     <section class="stack-section" id="stack">
         <div class="section-label">
-            <span class="mono">// section 02</span>
+            <span class="mono">// section 03</span>
             <h2>The stack</h2>
         </div>
         <div class="stack-grid" id="stack-grid"></div>
@@ -108,13 +122,13 @@
     <!-- EXPERIENCE -->
     <section class="experience" id="experience">
         <div class="section-label">
-            <span class="mono">// section 03</span>
+            <span class="mono">// section 04</span>
             <h2>Experience</h2>
         </div>
         <div class="timeline" id="timeline"></div>
     </section>
 
-    <!-- FOOTER: injected from src/components/footer.html -->
+    <!-- FOOTER: injected from public/components/footer.html -->
     <div id="footer-mount"></div>
 
     <!-- Scripts (loaded as modules) -->

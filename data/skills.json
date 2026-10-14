@@ -3,22 +3,58 @@
     {
       "name": "Languages",
       "icon": "code",
-      "items": ["html", "c", "css", "Xcode", "Python", "Java", "C++", "C#", "MATLAB", "JavaScript"]
+      "items": ["HTML", "C", "CSS", "Xcode", "Python", "Java", "C++", "C#", "MATLAB", "JavaScript"],
+      "descriptions": {
+        "HTML": "Builds the semantic structure of web pages, helping browsers and assistive technologies understand content.",
+        "C": "Used for low-level systems and embedded software where direct hardware control and predictable performance matter.",
+        "CSS": "Creates responsive layouts and visual styles that adapt web interfaces to different screens and devices.",
+        "Xcode": "Apple's development environment for building, testing, and debugging apps for iPhone, iPad, and Mac.",
+        "Python": "Commonly used for automation, backend services, data processing, and machine-learning prototypes.",
+        "Java": "An object-oriented language used in backend services, enterprise applications, and Android software.",
+        "C++": "Supports performance-sensitive applications such as game engines, systems software, and embedded products.",
+        "C#": "Used to build Unity games and applications on the .NET platform.",
+        "MATLAB": "Helps engineers and researchers analyze data, model systems, and run numerical simulations.",
+        "JavaScript": "Adds interaction to websites and also powers server-side applications through runtimes such as Node.js."
+      }
     },
     {
       "name": "Tools & Platforms",
       "icon": "wrench",
-      "items": ["Git", "Visual Studio", "MySQL", "WireShark", "Docker", "Command Line", "Arduino IDE", "DaVinci Resolve", "Unity"]
+      "items": ["Git", "Visual Studio", "MySQL", "Wireshark", "Docker", "Command Line", "Arduino IDE", "DaVinci Resolve", "Unity"],
+      "descriptions": {
+        "Git": "Tracks code changes and supports collaborative development through branches, reviews, and merges.",
+        "Visual Studio": "An IDE for developing and debugging .NET, C++, and other desktop or service applications.",
+        "MySQL": "A relational database used to store structured application data and query it with SQL.",
+        "Wireshark": "Captures and inspects network traffic to troubleshoot connectivity and understand protocols.",
+        "Docker": "Packages applications and their dependencies into containers for consistent development and deployment.",
+        "Command Line": "Runs shell commands for navigating projects, automating tasks, and building software.",
+        "Arduino IDE": "Writes and uploads firmware for Arduino-compatible microcontrollers and connected hardware.",
+        "DaVinci Resolve": "Edits video and handles color correction, audio, and post-production workflows.",
+        "Unity": "A real-time engine for creating interactive 2D and 3D applications, including games."
+      }
     },
     {
       "name": "Concepts",
       "icon": "brain",
-      "items": ["Web Development", "Agentic Workflow", "Large Language Models", "Databases", "Object-Oriented Programming", "Hardware-Software Integration", "Prototyping" ]
+      "items": ["Web Development", "Agentic Workflow", "Large Language Models", "Databases", "Object-Oriented Programming", "Hardware-Software Integration", "Prototyping"],
+      "descriptions": {
+        "Web Development": "Combines frontend interfaces, server logic, and APIs to deliver complete browser-based products.",
+        "Agentic Workflow": "Connects AI models with tools and structured steps to automate multi-stage tasks with checks.",
+        "Large Language Models": "Generative AI models that can interpret and produce text for assistants, analysis, and automation.",
+        "Databases": "Covers data modeling, schema design, queries, and reliable storage for application information.",
+        "Object-Oriented Programming": "Organizes software around reusable objects and clear responsibilities between components.",
+        "Hardware-Software Integration": "Connects firmware and application code with sensors, circuits, and physical devices.",
+        "Prototyping": "Turns early requirements into testable models to validate usability and technical assumptions quickly."
+      }
     },
     {
       "name": "Spoken Languages",
       "icon": "globe",
-      "items": ["English (Native)", "Spanish (Fluent)"]
+      "items": ["English (Native)", "Spanish (Fluent)"],
+      "descriptions": {
+        "English (Native)": "Native English communication for technical collaboration, documentation, and stakeholder discussions.",
+        "Spanish (Fluent)": "Fluent Spanish communication for collaboration with Spanish-speaking users and teams."
+      }
     }
   ]
 }

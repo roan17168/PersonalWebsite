@@ -3,6 +3,9 @@
    Reads the query param, fetches project data, populates the page
    =================================================================== */
 
+import currentProjects from '../../data/projects.json';
+import pastProjects from '../../data/past-projects.json';
+
 async function loadComponent(mountId, componentPath) {
     const mount = document.getElementById(mountId);
     if (!mount) return;
@@ -12,17 +15,6 @@ async function loadComponent(mountId, componentPath) {
         mount.innerHTML = await res.text();
     } catch (err) {
         console.error(err);
-    }
-}
-
-async function loadJSON(path) {
-    try {
-        const res = await fetch(path);
-        if (!res.ok) throw new Error(`Failed to load ${path}`);
-        return await res.json();
-    } catch (err) {
-        console.error(err);
-        return null;
     }
 }
 
@@ -101,14 +93,14 @@ function showNotFound() {
 
 document.addEventListener('DOMContentLoaded', async () => {
     await Promise.all([
-        loadComponent('nav-mount', 'src/components/nav.html'),
-        loadComponent('footer-mount', 'src/components/footer.html')
+        loadComponent('nav-mount', 'components/nav.html'),
+        loadComponent('footer-mount', 'components/footer.html')
     ]);
 
     const id = getQueryParam('id');
-    const projects = await loadJSON('data/projects.json');
+    const projects = [...currentProjects, ...pastProjects];
 
-    if (!id || !projects) {
+    if (!id) {
         showNotFound();
         return;
     }
