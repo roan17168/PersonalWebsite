@@ -5,10 +5,6 @@
 
 import { renderProjects, renderStack, renderExperience } from './renderer.js';
 import { initAnimations } from './animations.js';
-import projects from '../../data/projects.json';
-import pastProjects from '../../data/past-projects.json';
-import skills from '../../data/skills.json';
-import resume from '../../data/resume.json';
 
 /* ============ RESILIENT COMPONENT LOADER ============ */
 async function loadComponent(mountId, componentPath) {
@@ -19,7 +15,10 @@ async function loadComponent(mountId, componentPath) {
     const cleanPath = componentPath.startsWith('./') ? componentPath : `./${componentPath}`;
 
     try {
-        const res = await fetch(cleanPath);
+        let res = await fetch(cleanPath);
+        if (!res.ok) {
+            res = await fetch(cleanPath.replace('./', './public/'));
+        }
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         mount.innerHTML = await res.text();
     } catch (err) {
@@ -73,6 +72,17 @@ async function loadComponent(mountId, componentPath) {
                 </footer>
             `;
         }
+    }
+}
+
+async function loadJSON(path) {
+    try {
+        const res = await fetch(path);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return await res.json();
+    } catch (err) {
+        console.error(`Failed to load ${path}:`, err);
+        return null;
     }
 }
 
@@ -163,6 +173,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         loadComponent('nav-mount', './components/nav.html'),
         loadComponent('footer-mount', './components/footer.html')
     ]);
+
+    const [projects, pastProjects, skills, resume] = await Promise.all([
+        loadJSON('./data/projects.json'),
+        loadJSON('./data/past-projects.json'),
+        loadJSON('./data/skills.json'),
+        loadJSON('./data/resume.json')
+    ]);
+
     document.querySelectorAll('.mobile-nav-panel a').forEach(link => {
         link.addEventListener('click', () => {
             const menu = link.closest('.mobile-section-nav');

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="shell" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#283238"/>
+      <stop offset="0.48" stop-color="#11171b"/>
+      <stop offset="1" stop-color="#07090b"/>
+    </linearGradient>
+    <linearGradient id="chrome" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f7ffff"/>
+      <stop offset="0.32" stop-color="#8fa4ad"/>
+      <stop offset="0.58" stop-color="#f5ffff"/>
+      <stop offset="1" stop-color="#98aab1"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="60" height="60" rx="15" fill="url(#shell)" stroke="#dffcff" stroke-opacity="0.35"/>
+  <g transform="translate(32 32) scale(0.96) translate(-32 -32)">
+    <path d="M14 10h17c11 0 17 6 17 16 0 8-4 13-12 15l14 14H37L25 43h-2v12H14zm9 11v12h8c5 0 7-2 7-6s-2-6-7-6z" fill="#162319" stroke="#496f19" stroke-width="1" fill-rule="evenodd" transform="translate(2 3)"/>
+    <path d="M14 10h17c11 0 17 6 17 16 0 8-4 13-12 15l14 14H37L25 43h-2v12H14zm9 11v12h8c5 0 7-2 7-6s-2-6-7-6z" fill="url(#chrome)" fill-rule="evenodd"/>
+    <path d="M18.5 16v33" fill="none" stroke="#c4ff3d" stroke-width="2.8" stroke-linecap="round"/>
+  </g>
+</svg>

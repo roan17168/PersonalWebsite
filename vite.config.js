@@ -21,7 +21,9 @@ export default defineConfig({
   plugins: [{
     name: 'copy-project-previews',
     closeBundle() {
-      cpSync(resolve(rootDir, 'projects'), resolve(rootDir, 'dist/projects'), { recursive: true });
+      for (const directory of ['data', 'projects']) {
+        cpSync(resolve(rootDir, directory), resolve(rootDir, 'dist', directory), { recursive: true });
+      }
     }
   }],
   server: {
