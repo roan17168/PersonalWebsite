@@ -36,5 +36,36 @@
     "githubUrl": "https://github.com/roan17168/AllInOne",
     "liveUrl": "",
     "bentoSize": "medium"
+  },
+  {
+    "id": "rick-detweiler",
+    "title": "Rick Detweiler",
+    "category": "Web / Research",
+    "featured": false,
+    "year": 2026,
+    "tech": ["HTML", "CSS", "JavaScript"],
+    "description": "Research-driven website translating a study of 1,000 graduates into clear findings and an interactive college decision experience.",
+    "longDescription": "A research-focused website that makes findings from a study of 1,000 graduates approachable and useful. It presents evidence about the college experiences associated with long-term outcomes—including faculty and student involvement, broad study, and challenging coursework—and guides visitors toward a two-minute quiz designed to help them ask better questions when evaluating a college.",
+    "projectUrl": "https://roan17168.github.io/RickDetweilerWebsite/",
+    "type": "iframe",
+    "githubUrl": "",
+    "liveUrl": "",
+    "bentoSize": "medium"
+  },
+  {
+    "id": "radia",
+    "title": "Radia",
+    "category": "Web / Privacy & Social",
+    "featured": false,
+    "year": 2026,
+    "tech": ["HTML", "CSS", "JavaScript", "On-device Storage"],
+    "description": "Privacy-first social experience encouraging real-world connection through nearby encounters and guided conversation prompts.",
+    "longDescription": "A prototype for intentional, in-person connection. Its interface combines proximity-based encounters, synchronized conversation prompts, and a personal reflection log designed around on-device storage. The experience makes privacy a visible part of the product while encouraging users to notice their surroundings, start conversations, and reflect on them afterward.",
+    "projectUrl": "https://roan17168.github.io/Radia-web/",
+    "type": "iframe",
+    "status": "in-progress",
+    "githubUrl": "",
+    "liveUrl": "",
+    "bentoSize": "medium"
   }
 ]
