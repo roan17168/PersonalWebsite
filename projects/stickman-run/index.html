@@ -1,35 +1,1057 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Stickman Run — Loading</title>
-    <style>
-        body {
-            margin: 0;
-            background: #0a0a0b;
-            color: #f4f4f5;
-            font-family: 'JetBrains Mono', monospace;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            text-align: center;
-            padding: 2rem;
-        }
-        h1 { color: #c4ff3d; font-size: 2rem; margin-bottom: 1rem; }
-        p { color: #a1a1aa; max-width: 500px; line-height: 1.6; }
-        a { color: #c4ff3d; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Stick Boi Adventure — Play</title>
+<link rel="icon" type="image/svg+xml" href="../../favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #07090d;
+    --panel: rgba(12, 16, 22, 0.9);
+    --line: rgba(255, 255, 255, 0.13);
+    --line-strong: rgba(255, 255, 255, 0.26);
+    --lime: #c4ff3d;
+    --text: #f3f5f7;
+    --muted: #9aa3ad;
+    --danger: #ff5a5a;
+    --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    --display: 'Fira Sans', system-ui, -apple-system, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    background: var(--ink);
+    color: var(--text);
+    font-family: var(--display);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  button { font: inherit; color: inherit; }
+  button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible {
+    outline: 2px solid var(--lime);
+    outline-offset: 3px;
+  }
+
+  #app { position: fixed; inset: 0; overflow: hidden; }
+  .hidden { display: none !important; }
+
+  canvas#game {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    cursor: crosshair;
+    touch-action: none;
+  }
+
+  /* =========================================================
+     HUD
+     ========================================================= */
+  .hud {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    padding: 14px clamp(12px, 2vw, 24px);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    font-family: var(--mono);
+    opacity: 0;
+    transition: opacity .3s ease;
+    z-index: 6;
+  }
+  .hud.active { opacity: 1; }
+  .hud-left { display: flex; flex-direction: column; gap: 7px; }
+
+  .stat {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 10px 4px 6px;
+    border-radius: 999px;
+    background: rgba(6, 8, 11, .66);
+    border: 1px solid var(--line);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  .stat img { width: 16px; height: 16px; image-rendering: pixelated; opacity: .95; flex: none; }
+  .stat .bar {
+    position: relative;
+    width: clamp(88px, 12vw, 168px);
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .12);
+    overflow: hidden;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, .55);
+  }
+  .stat .bar > i {
+    position: absolute; inset: 0 auto 0 0; width: 100%;
+    border-radius: 999px;
+    transition: width .12s linear, background-color .25s ease;
+    background: var(--lime);
+  }
+  .stat .val {
+    font-size: 10px; font-weight: 700; letter-spacing: .04em;
+    color: var(--muted); min-width: 20px; text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat.health .bar > i { background: #ff6b6b; }
+  .stat.health .bar > i.mid { background: #ffc857; }
+  .stat.health .bar > i.low { background: #ff4444; }
+  .stat.stamina .bar > i { background: #6be3ff; }
+  .stat.slow .bar > i { background: #b98cff; }
+  .stat.ammo .pips { display: flex; gap: 3px; }
+  .stat.ammo .pips b {
+    width: 5px; height: 11px; border-radius: 2px;
+    background: rgba(255, 255, 255, .17);
+    transition: background-color .1s ease, box-shadow .1s ease;
+  }
+  .stat.ammo .pips b.on { background: #ffd166; box-shadow: 0 0 7px rgba(255, 209, 102, .5); }
+
+  .hud-right { display: flex; align-items: center; gap: 7px; pointer-events: auto; }
+  .diamonds {
+    display: flex; align-items: center; gap: 7px;
+    padding: 5px 11px 5px 7px; border-radius: 999px;
+    background: rgba(6, 8, 11, .66); border: 1px solid var(--line);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    font-size: 11px; font-weight: 700; letter-spacing: .06em;
+  }
+  .diamonds img { width: 17px; height: 17px; image-rendering: pixelated; }
+  .diamonds #diamond-count { color: var(--lime); font-variant-numeric: tabular-nums; }
+  .diamonds .total { color: var(--muted); }
+
+  .icon-btn {
+    width: 33px; height: 33px; display: grid; place-items: center;
+    border-radius: 50%; background: rgba(6, 8, 11, .66);
+    border: 1px solid var(--line); color: var(--text);
+    font-family: var(--mono); font-size: 13px; cursor: pointer;
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    transition: border-color .18s ease, color .18s ease, background .18s ease;
+  }
+  .icon-btn:hover { border-color: var(--lime); color: var(--lime); background: rgba(196, 255, 61, .08); }
+
+  .toast {
+    position: absolute; left: 50%; bottom: 9%;
+    transform: translate(-50%, 10px);
+    padding: 8px 15px; border-radius: 999px;
+    background: rgba(6, 8, 11, .88); border: 1px solid var(--line-strong);
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: .08em;
+    color: var(--text); opacity: 0; pointer-events: none; z-index: 8;
+    transition: opacity .25s ease, transform .25s ease; white-space: nowrap;
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  /* =========================================================
+     ORIGINAL UNITY MENU
+     ========================================================= */
+  .screen { position: absolute; inset: 0; z-index: 20; }
+
+  .menu {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: stretch;
+    overflow: hidden;
+    background: #0a0d13;
+  }
+  .menu-art {
+    position: absolute;
+    inset: -3%;
+    background: url("assets/menu-bg.webp") center 42% / cover no-repeat;
+    filter: saturate(1.02) brightness(.92);
+    transform: scale(1.02);
+    animation: kenburns 46s ease-in-out infinite alternate;
+  }
+  @keyframes kenburns {
+    from { transform: scale(1.02) translate3d(0, 0, 0); }
+    to { transform: scale(1.11) translate3d(-1.4%, -1%, 0); }
+  }
+  .menu-shade {
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(90deg, rgba(6, 9, 14, .55) 0%, rgba(6, 9, 14, .18) 38%, rgba(6, 9, 14, .62) 74%, rgba(6, 9, 14, .82) 100%),
+      linear-gradient(0deg, rgba(4, 6, 10, .88) 0%, rgba(4, 6, 10, 0) 38%);
+  }
+  .menu-grain {
+    position: absolute; inset: 0; pointer-events: none; opacity: .16;
+    background-image: radial-gradient(rgba(255, 255, 255, .5) .5px, transparent .5px);
+    background-size: 3px 3px; mix-blend-mode: overlay;
+  }
+
+  .menu-title {
+    position: absolute;
+    left: clamp(18px, 4.6vw, 84px);
+    top: clamp(74px, 23vh, 240px);
+    max-width: 78vw;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .menu-title h1 {
+    margin: 0;
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: clamp(30px, 7.05vw, 118px);
+    line-height: .92;
+    letter-spacing: -0.012em;
+    color: #fff;
+    text-shadow: 0 6px 30px rgba(0, 0, 0, .6), 0 1px 0 rgba(0, 0, 0, .4);
+    transform: skewX(-1.2deg);
+  }
+  .menu-title .sub {
+    display: block;
+    margin-top: clamp(12px, 2.2vh, 26px);
+    font-family: var(--mono);
+    font-size: clamp(8.5px, 1vw, 11px);
+    font-weight: 500;
+    letter-spacing: .34em;
+    text-transform: uppercase;
+    color: rgba(233, 240, 247, .82);
+    text-shadow: 0 2px 12px rgba(0, 0, 0, .8);
+  }
+  .menu-title .sub b { color: var(--lime); font-weight: 700; }
+
+  /* right-hand menu panel — 25% wide, 75px buttons: the original layout */
+  .menu-nav {
+    position: relative;
+    z-index: 2;
+    grid-column: 2;
+    justify-self: end;
+    align-self: center;
+    width: clamp(230px, 25vw, 480px);
+    margin-right: clamp(18px, 12.2vw, 234px);
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    filter: drop-shadow(0 12px 30px rgba(0, 0, 0, .45));
+  }
+  .menu-btn {
+    appearance: none;
+    border: 0;
+    background: #f2f2f0;
+    color: #242424;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(13px, 1.05vw, 18px);
+    letter-spacing: .17em;
+    height: clamp(50px, 6.9vh, 75px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    position: relative;
+    transition: background .13s ease, color .13s ease, transform .13s ease;
+  }
+  .menu-btn:not(:last-child)::after {
+    content: '';
+    position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+    background: rgba(0, 0, 0, .13);
+  }
+  .menu-btn:first-child { border-radius: 7px 7px 0 0; }
+  .menu-btn:last-child { border-radius: 0 0 7px 7px; }
+  .menu-btn:hover { background: #fff; color: #000; }
+  .menu-btn:active { transform: translateY(1px); }
+  .menu-btn .tag {
+    position: absolute; right: 12px;
+    font-family: var(--mono); font-size: 8.5px; font-weight: 500;
+    letter-spacing: .12em; color: rgba(0, 0, 0, .42);
+    opacity: 0; transform: translateX(4px);
+    transition: opacity .15s ease, transform .15s ease;
+  }
+  .menu-btn:hover .tag { opacity: 1; transform: translateX(0); }
+  /* the original menu used one uniform white button style for every entry */
+  .menu-btn.primary { background: #f7f7f5; color: #1d1d1d; }
+  .menu-btn.primary:hover { background: #fff; color: #000; }
+  .menu-btn.primary .tag { color: rgba(0, 0, 0, .42); }
+  .menu-btn.ghost-dark { background: rgba(14, 18, 24, .72); color: #eef2f5; backdrop-filter: blur(6px); }
+  .menu-btn.ghost-dark:hover { background: rgba(24, 30, 38, .9); color: #fff; }
+  .menu-btn.ghost-dark .tag { color: rgba(255, 255, 255, .42); }
+
+  .menu-controls {
+    position: absolute;
+    left: clamp(18px, 4.6vw, 84px);
+    bottom: clamp(46px, 6.5vh, 74px);
+    z-index: 2;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    max-width: min(640px, 58vw);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .04em;
+    color: rgba(233, 240, 247, .78);
+  }
+  .menu-controls .k {
+    display: inline-flex; align-items: center; gap: 6px;
+    white-space: nowrap;
+  }
+  .menu-controls kbd {
+    font-family: var(--mono); font-size: 9px; font-weight: 700;
+    color: #0d1116; background: #dfe6ec;
+    border-radius: 3px; padding: 2px 5px; line-height: 1.35;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, .35);
+  }
+  .menu-controls .lbl { opacity: .85; }
+
+  .menu-credit {
+    position: absolute;
+    right: clamp(18px, 12.2vw, 234px);
+    bottom: clamp(12px, 2.4vh, 26px);
+    z-index: 2;
+    text-align: right;
+    font-family: var(--mono);
+    font-size: 8.5px;
+    line-height: 1.8;
+    letter-spacing: .1em;
+    color: rgba(226, 234, 241, .42);
+    text-transform: uppercase;
+  }
+  .menu-credit a { color: rgba(196, 255, 61, .8); text-decoration: none; }
+  .menu-credit a:hover { color: var(--lime); text-decoration: underline; }
+
+  /* =========================================================
+     SETTINGS / CONTROLS PANELS
+     ========================================================= */
+  .panel-screen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(5, 7, 10, .72);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    overflow-y: auto;
+  }
+  .panel-screen.art-bg::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("assets/menu-bg.webp") center 42% / cover no-repeat;
+    filter: brightness(.4) saturate(.9);
+    z-index: -1;
+  }
+  .unity-panel {
+    width: min(720px, 100%);
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: clamp(20px, 3.4vw, 38px);
+    background: linear-gradient(170deg, rgba(18, 23, 31, .96), rgba(9, 12, 17, .97));
+    box-shadow: 0 40px 110px rgba(0, 0, 0, .66);
+    text-align: center;
+  }
+  .unity-panel h2 {
+    margin: 0 0 4px;
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(26px, 3.2vw, 40px);
+    letter-spacing: .1em;
+  }
+  .unity-panel .kicker {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: .28em;
+    text-transform: uppercase;
+    color: var(--lime);
+    margin: 0 0 22px;
+  }
+
+  .setting-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 4px;
+    border-bottom: 1px solid rgba(255, 255, 255, .07);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    text-align: left;
+  }
+  .setting-row .value {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 190px;
+    justify-content: flex-end;
+  }
+  .setting-row select {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .12em;
+    background: #f2f2f0;
+    color: #222;
+    border: 0;
+    border-radius: 4px;
+    padding: 6px 9px;
+    cursor: pointer;
+  }
+  .toggle {
+    appearance: none;
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .14em;
+    background: #f2f2f0;
+    color: #222;
+    border: 0;
+    border-radius: 4px;
+    padding: 6px 14px;
+    cursor: pointer;
+    min-width: 62px;
+  }
+  .toggle[aria-pressed="true"] { background: var(--lime); color: #111703; }
+
+  .range-wrap { display: flex; align-items: center; gap: 10px; }
+  .range-wrap output {
+    font-size: 10px;
+    color: var(--muted);
+    min-width: 34px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  input[type="range"] {
+    -webkit-appearance: none; appearance: none;
+    width: clamp(110px, 16vw, 190px); height: 4px; border-radius: 999px;
+    background: rgba(255, 255, 255, .2); outline: none; cursor: pointer;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%;
+    background: var(--lime); box-shadow: 0 0 0 3px rgba(196, 255, 61, .15);
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 14px; height: 14px; border: 0; border-radius: 50%; background: var(--lime);
+  }
+
+  .controls-block {
+    margin-top: 26px;
+    text-align: left;
+  }
+  .controls-block h3 {
+    margin: 0 0 12px;
+    font-family: var(--mono);
+    font-size: 9.5px;
+    font-weight: 500;
+    letter-spacing: .26em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .controls-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(188px, 1fr));
+    gap: 7px;
+  }
+  .control-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 9px;
+    border: 1px solid rgba(255, 255, 255, .08);
+    border-radius: 7px;
+    background: rgba(255, 255, 255, .025);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .03em;
+    color: #c3ccd4;
+    line-height: 1.35;
+  }
+  .control-row kbd {
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 700;
+    color: #0d1116;
+    background: #e3e9ee;
+    border-radius: 3px;
+    padding: 2px 5px;
+    white-space: nowrap;
+    flex: none;
+  }
+  .control-row .desc { flex: 1; }
+  .control-row .src { color: rgba(196, 255, 61, .55); font-size: 8px; letter-spacing: .1em; }
+
+  .panel-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 28px;
+  }
+  .unity-btn {
+    appearance: none;
+    min-width: 132px;
+    padding: 11px 18px;
+    border: 0;
+    border-radius: 5px;
+    background: #f2f2f0;
+    color: #222;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 11.5px;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background .14s ease, color .14s ease, transform .14s ease;
+  }
+  .unity-btn:hover { background: #fff; }
+  .unity-btn:active { transform: translateY(1px); }
+  .unity-btn.accent { background: var(--lime); color: #101704; }
+  .unity-btn.accent:hover { background: #d5ff72; }
+  .unity-btn.subtle {
+    background: rgba(255, 255, 255, .06);
+    color: #e9eef2;
+    border: 1px solid rgba(255, 255, 255, .16);
+  }
+  .unity-btn.subtle:hover { background: rgba(255, 255, 255, .11); }
+
+  /* =========================================================
+     PAUSE / DEATH / WIN
+     ========================================================= */
+  .modal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(4, 6, 9, .74);
+    backdrop-filter: blur(9px);
+    -webkit-backdrop-filter: blur(9px);
+  }
+  .modal-card {
+    width: min(470px, 100%);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: clamp(22px, 3.5vw, 34px);
+    background: linear-gradient(170deg, rgba(18, 23, 31, .96), rgba(9, 12, 17, .97));
+    box-shadow: 0 40px 110px rgba(0, 0, 0, .7);
+    text-align: center;
+  }
+  .modal-card .kicker {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    color: var(--lime);
+    margin: 0 0 10px;
+  }
+  .modal-card h2 {
+    margin: 0 0 8px;
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(26px, 4.2vw, 36px);
+    letter-spacing: .02em;
+  }
+  .modal-card p {
+    margin: 0 0 20px;
+    font-family: var(--mono);
+    font-size: 11px;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+  .modal-stats {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    gap: 18px;
+    margin: 2px 0 22px;
+    font-family: var(--mono);
+  }
+  .modal-stats > div:not(.rule) { display: flex; flex-direction: column; gap: 4px; min-width: 62px; }
+  .modal-stats b { font-size: 24px; color: var(--lime); font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+  .modal-stats span { font-size: 8.5px; letter-spacing: .18em; color: var(--muted); text-transform: uppercase; }
+  .modal-stats .rule { width: 1px; min-width: 1px; flex: none; background: var(--line); }
+  .modal-card.win .kicker { color: var(--lime); }
+  .modal-card.death .kicker { color: var(--danger); }
+  .modal-card.death h2 { color: #ffecec; }
+
+  /* =========================================================
+     BEHIND THE SCENES — blueprint atlas
+     ========================================================= */
+  .atlas {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    background:
+      radial-gradient(1100px 700px at 30% 12%, rgba(30, 78, 106, .26), transparent 68%),
+      radial-gradient(900px 640px at 84% 92%, rgba(31, 61, 44, .2), transparent 66%),
+      #05080d;
+    color: #dceaf2;
+    overflow: hidden;
+  }
+  .atlas::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(120, 200, 220, .055) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(120, 200, 220, .055) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(circle at 40% 45%, #000 30%, transparent 88%);
+    -webkit-mask-image: radial-gradient(circle at 40% 45%, #000 30%, transparent 88%);
+    pointer-events: none;
+  }
+  .atlas-top {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 13px clamp(14px, 2vw, 26px);
+    border-bottom: 1px solid rgba(130, 200, 220, .14);
+    background: rgba(5, 9, 14, .72);
+    backdrop-filter: blur(8px);
+  }
+  .atlas-top .left { display: flex; align-items: baseline; gap: 14px; min-width: 0; }
+  .atlas-top h2 {
+    margin: 0;
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(15px, 1.6vw, 21px);
+    letter-spacing: .14em;
+    white-space: nowrap;
+  }
+  .atlas-top .kicker {
+    font-family: var(--mono);
+    font-size: 8.5px;
+    letter-spacing: .24em;
+    text-transform: uppercase;
+    color: #6fe3c0;
+    white-space: nowrap;
+  }
+  .atlas-top .right { display: flex; align-items: center; gap: 8px; }
+  .atlas-top .unity-btn { min-width: 0; padding: 9px 15px; font-size: 10px; }
+
+  .atlas-body { position: relative; min-height: 0; display: grid; grid-template-columns: 1fr 330px; }
+  .atlas-stage { position: relative; min-height: 0; }
+  #atlas-canvas {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    display: block; cursor: crosshair;
+  }
+  .atlas-readout {
+    position: absolute; left: 16px; top: 14px; z-index: 2;
+    font-family: var(--mono); font-size: 9.5px; line-height: 1.8;
+    letter-spacing: .06em; color: #9fd7e6;
+    background: rgba(5, 10, 16, .62);
+    border: 1px solid rgba(130, 200, 220, .16);
+    border-radius: 6px; padding: 8px 11px;
+    pointer-events: none; max-width: 300px;
+    text-transform: uppercase;
+  }
+  .atlas-readout b { color: #eaf7ff; font-weight: 700; }
+  .atlas-readout .dim { color: #5b8797; }
+
+  .atlas-layers {
+    position: absolute; left: 16px; bottom: 16px; z-index: 2;
+    display: flex; flex-wrap: wrap; gap: 5px; max-width: min(660px, 78%);
+  }
+  .layer-chip {
+    appearance: none;
+    font-family: var(--mono); font-size: 8.5px; letter-spacing: .12em;
+    text-transform: uppercase;
+    color: #8fc2d2;
+    background: rgba(5, 10, 16, .68);
+    border: 1px solid rgba(130, 200, 220, .2);
+    border-radius: 999px; padding: 6px 11px; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px;
+    transition: color .15s ease, border-color .15s ease, background .15s ease;
+  }
+  .layer-chip i {
+    width: 6px; height: 6px; border-radius: 50%; background: currentColor;
+    opacity: .5; font-style: normal;
+  }
+  .layer-chip[aria-pressed="true"] { color: #eaf9ff; border-color: rgba(160, 230, 245, .55); background: rgba(16, 34, 44, .85); }
+  .layer-chip[aria-pressed="true"] i { opacity: 1; box-shadow: 0 0 8px currentColor; }
+  .layer-chip .k { font-size: 7.5px; color: #5f8b99; }
+
+  .atlas-panel {
+    position: relative;
+    z-index: 2;
+    border-left: 1px solid rgba(130, 200, 220, .14);
+    background: rgba(5, 9, 14, .62);
+    padding: 16px 16px 20px;
+    overflow-y: auto;
+    font-family: var(--mono);
+  }
+  .atlas-panel h3 {
+    margin: 0 0 3px;
+    font-family: var(--display);
+    font-weight: 800; font-size: 13px; letter-spacing: .16em;
+    text-transform: uppercase; color: #eaf7ff;
+  }
+  .atlas-panel .note {
+    margin: 0 0 14px; font-size: 8.5px; line-height: 1.7;
+    letter-spacing: .1em; text-transform: uppercase; color: #5f8b99;
+  }
+  .atlas-panel .facts { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 16px; }
+  .fact {
+    border: 1px solid rgba(130, 200, 220, .12);
+    border-radius: 6px; padding: 7px 8px;
+    background: rgba(255, 255, 255, .015);
+  }
+  .fact b {
+    display: block; font-family: var(--display); font-weight: 800;
+    font-size: 17px; letter-spacing: .01em; color: #d9f6ff; line-height: 1.1;
+  }
+  .fact span { display: block; font-size: 7.5px; letter-spacing: .14em; text-transform: uppercase; color: #5f8b99; margin-top: 3px; }
+
+  .atlas-panel .rule { height: 1px; background: rgba(130, 200, 220, .14); margin: 14px 0; }
+  .legend { display: flex; flex-direction: column; gap: 5px; margin-bottom: 4px; }
+  .legend span { display: flex; align-items: center; gap: 8px; font-size: 8.5px; letter-spacing: .1em; color: #8fb6c3; text-transform: uppercase; }
+  .legend i { width: 16px; height: 3px; border-radius: 2px; background: currentColor; }
+  .legend i.box { height: 9px; width: 9px; border-radius: 2px; }
+  .legend .c-terrain { color: #6fe3c0; }
+  .legend .c-solid { color: #5fa8ff; }
+  .legend .c-trap { color: #ff6b6b; }
+  .legend .c-diamond { color: #7ef9ff; }
+  .legend .c-heart { color: #ff8b8b; }
+  .legend .c-slow { color: #c9a6ff; }
+  .legend .c-enemy { color: #ffb357; }
+  .legend .c-joint { color: #ffd166; }
+
+  .atlas-panel .code {
+    font-size: 8px; line-height: 1.75; color: #6f9aa8;
+    white-space: pre-wrap; letter-spacing: .02em;
+    border-left: 1px solid rgba(130, 200, 220, .18);
+    padding-left: 9px; margin-top: 8px;
+  }
+  .atlas-panel .code b { color: #cdeef9; font-weight: 500; }
+
+  /* =========================================================
+     LOADING
+     ========================================================= */
+  .loading {
+    display: flex; align-items: center; justify-content: center;
+    background: radial-gradient(900px 600px at 50% 30%, #101820, #04060a 72%);
+    z-index: 40;
+  }
+  .loading-inner { text-align: center; font-family: var(--mono); }
+  .loading-inner h1 {
+    font-family: var(--display); font-weight: 900; letter-spacing: .04em;
+    font-size: clamp(22px, 3.4vw, 34px); margin: 0 0 6px;
+  }
+  .loading-inner .sub { font-size: 8.5px; letter-spacing: .3em; color: var(--lime); text-transform: uppercase; margin-bottom: 22px; }
+  .loading-bar { width: min(280px, 62vw); height: 3px; border-radius: 999px; background: rgba(255, 255, 255, .1); margin: 0 auto 10px; overflow: hidden; }
+  .loading-bar i { display: block; height: 100%; width: 0%; background: var(--lime); transition: width .2s ease; }
+  .loading-label { font-size: 9px; letter-spacing: .2em; color: var(--muted); text-transform: uppercase; }
+
+  /* =========================================================
+     RESPONSIVE
+     ========================================================= */
+  @media (max-width: 900px) {
+    .atlas-body { grid-template-columns: 1fr; }
+    .atlas-panel { display: none; }
+  }
+  @media (max-width: 760px) {
+    .menu { display: block; }
+    .menu-title { top: 9vh; max-width: 92vw; }
+    .menu-title h1 { font-size: clamp(30px, 10vw, 54px); }
+    .menu-nav {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 92px;
+      width: auto;
+      margin: 0;
+      grid-column: auto;
+      justify-self: stretch;
+    }
+    .menu-btn { height: 54px; font-size: 13px; }
+    .menu-controls { display: none; }
+    .menu-credit { right: 16px; bottom: 10px; font-size: 7.5px; }
+    .unity-panel { padding: 20px 16px; }
+    .setting-row { font-size: 9.5px; }
+    .setting-row .value { min-width: 140px; }
+    .controls-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-height: 620px) {
+    .menu-title { top: 8vh; }
+    .menu-btn { height: 46px; }
+    .menu-controls { display: none; }
+    .menu-credit { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .menu-art { animation: none; }
+  }
+</style>
 </head>
 <body>
-    <div>
-        <h1>Stickman Run</h1>
-        <p>
-            WebGL build in progress. Once the Unity WebGL export is complete,
-            drop the <code>Build/</code> and <code>TemplateData/</code> folders
-            plus <code>index.html</code> here to replace this placeholder.
-        </p>
-        <p><a href="../../index.html">← back to portfolio</a></p>
+<div id="app">
+  <canvas id="game" aria-label="Stick Boi Adventure game canvas"></canvas>
+
+  <!-- ================= HUD ================= -->
+  <div class="hud" id="hud" aria-hidden="true">
+    <div class="hud-left">
+      <div class="stat health" title="Health">
+        <img src="assets/GameHeart.webp" alt="">
+        <div class="bar"><i id="health-fill"></i></div>
+        <span class="val" id="health-val">10</span>
+      </div>
+      <div class="stat stamina" title="Stamina — spent by jumping, crouching and sliding">
+        <img src="assets/icons8-lightning-bolt-64.webp" alt="">
+        <div class="bar"><i id="stamina-fill"></i></div>
+      </div>
+      <div class="stat slow" title="Slow motion — W, 25 charge per use">
+        <img src="assets/icons8-slow-motion-64.webp" alt="">
+        <div class="bar"><i id="slow-fill"></i></div>
+      </div>
+      <div class="stat ammo" id="ammo-stat" title="Ammo — press R to reload">
+        <img src="assets/icons8-ammo-48.webp" alt="">
+        <div class="pips" id="ammo-pips"></div>
+      </div>
     </div>
+    <div class="hud-right">
+      <div class="diamonds">
+        <img src="assets/icons8-diamond-64.webp" alt="">
+        <span><span id="diamond-count">0</span><span class="total"> / 25</span></span>
+      </div>
+      <button class="icon-btn" id="help-btn" aria-label="Controls" title="Controls (H)">?</button>
+      <button class="icon-btn" id="pause-btn" aria-label="Pause" title="Pause (Esc)">❚❚</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- ================= LOADING ================= -->
+  <section class="screen loading" id="loading-screen">
+    <div class="loading-inner">
+      <h1>STICK BOI ADVENTURE</h1>
+      <div class="sub">Rebuilding the cave</div>
+      <div class="loading-bar"><i id="loading-fill"></i></div>
+      <div class="loading-label" id="loading-label">Loading art, audio and level data…</div>
+    </div>
+  </section>
+
+  <!-- ================= ORIGINAL MAIN MENU ================= -->
+  <section class="screen menu hidden" id="menu-screen">
+    <div class="menu-art" aria-hidden="true"></div>
+    <div class="menu-shade" aria-hidden="true"></div>
+    <div class="menu-grain" aria-hidden="true"></div>
+
+    <div class="menu-title">
+      <h1>STICK BOI ADVENTURE</h1>
+      <span class="sub">Grapple Up · Unity 2021 · <b>rebuilt for the browser</b></span>
+    </div>
+
+    <nav class="menu-nav" aria-label="Main menu">
+      <button class="menu-btn primary" id="menu-play">PLAY<span class="tag">ENTER</span></button>
+      <button class="menu-btn" id="menu-settings">SETTINGS<span class="tag">S</span></button>
+      <button class="menu-btn" id="menu-observe">BEHIND THE SCENES<span class="tag">O</span></button>
+      <button class="menu-btn" id="menu-exit">EXIT TO PORTFOLIO<span class="tag">ESC</span></button>
+    </nav>
+
+    <div class="menu-controls" id="menu-controls" aria-label="Controls">
+      <span class="k"><kbd>A</kbd><kbd>D</kbd><span class="lbl">Move</span></span>
+      <span class="k"><kbd>SPACE</kbd><span class="lbl">Jump / wall-jump</span></span>
+      <span class="k"><kbd>LMB</kbd><span class="lbl">Grapple · shoot · punch</span></span>
+      <span class="k"><kbd>Q</kbd><span class="lbl">Draw pistol</span></span>
+      <span class="k"><kbd>R</kbd><span class="lbl">Reload</span></span>
+      <span class="k"><kbd>SHIFT</kbd><span class="lbl">Crouch / slide</span></span>
+      <span class="k"><kbd>W</kbd><span class="lbl">Slow motion</span></span>
+    </div>
+
+    <div class="menu-credit">
+      Original soundtrack, art &amp; physics recovered from the 2021 build
+    </div>
+  </section>
+
+  <!-- ================= SETTINGS (original Unity panel) ================= -->
+  <section class="screen panel-screen art-bg hidden" id="settings-screen" aria-label="Settings">
+    <div class="unity-panel">
+      <h2>SETTINGS</h2>
+      <p class="kicker">Stick Boi Adventure · v1.0</p>
+
+      <div class="setting-row">
+        <span>Fullscreen</span>
+        <div class="value"><button class="toggle" id="set-fullscreen" aria-pressed="false">OFF</button></div>
+      </div>
+
+      <div class="setting-row">
+        <span>Quality</span>
+        <div class="value">
+          <select id="set-quality" aria-label="Render quality">
+            <option value="low">LOW</option>
+            <option value="normal" selected>NORMAL</option>
+            <option value="high">HIGH</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <span>Volume</span>
+        <div class="value">
+          <div class="range-wrap">
+            <input type="range" id="set-volume" min="0" max="100" value="70" aria-label="Volume">
+            <output id="volume-out">70%</output>
+          </div>
+        </div>
+      </div>
+
+      <div class="controls-block">
+        <h3>Controls — recovered from the original input code</h3>
+        <div class="controls-grid" id="settings-controls"></div>
+      </div>
+
+      <div class="panel-actions">
+        <button class="unity-btn accent" id="settings-back">BACK</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CONTROLS (in-game) ================= -->
+  <section class="screen panel-screen hidden" id="controls-screen" aria-label="Controls">
+    <div class="unity-panel">
+      <h2>CONTROLS</h2>
+      <p class="kicker">Keyboard &amp; mouse</p>
+      <div class="controls-grid" id="controls-list"></div>
+      <p class="kicker" style="margin:20px 0 0">Tips · hold LMB to swing · W while grappling hops the rope · SHIFT slides under low ceilings</p>
+      <div class="panel-actions">
+        <button class="unity-btn accent" id="controls-back">BACK TO GAME</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= BEHIND THE SCENES / LEVEL ATLAS ================= -->
+  <section class="screen atlas hidden" id="atlas-screen" aria-label="Behind the scenes level atlas">
+    <header class="atlas-top">
+      <div class="left">
+        <h2>BEHIND THE SCENES</h2>
+        <span class="kicker">Game.unity · decompiled &amp; re-drawn</span>
+      </div>
+      <div class="right">
+        <button class="unity-btn subtle" id="atlas-close">BACK</button>
+        <button class="unity-btn accent" id="atlas-play">PLAY</button>
+      </div>
+    </header>
+
+    <div class="atlas-body">
+      <div class="atlas-stage">
+        <canvas id="atlas-canvas" aria-label="Full level map with collision, pickups and entities"></canvas>
+        <div class="atlas-readout" id="atlas-readout">
+          <div><b>Whole level</b> <span class="dim">· 13 tilemaps · 19 hinge bars</span></div>
+          <div>scroll to zoom · drag to pan · hover to inspect</div>
+        </div>
+        <div class="atlas-layers" id="atlas-layers" role="group" aria-label="Map layers">
+          <button class="layer-chip" data-layer="terrain" aria-pressed="true"><i></i>Terrain <span class="k">1</span></button>
+          <button class="layer-chip" data-layer="collision" aria-pressed="true"><i></i>Collision <span class="k">2</span></button>
+          <button class="layer-chip" data-layer="pickups" aria-pressed="true"><i></i>Pickups <span class="k">3</span></button>
+          <button class="layer-chip" data-layer="enemies" aria-pressed="true"><i></i>Gunners <span class="k">4</span></button>
+          <button class="layer-chip" data-layer="joints" aria-pressed="true"><i></i>Hinges <span class="k">5</span></button>
+          <button class="layer-chip" data-layer="grid" aria-pressed="true"><i></i>Grid <span class="k">6</span></button>
+        </div>
+      </div>
+
+      <aside class="atlas-panel" id="atlas-panel">
+        <h3>The recovered build</h3>
+        <p class="note">Everything below was pulled out of the shipped Unity player — no source project, no editor.</p>
+        <div class="facts" id="atlas-facts"></div>
+
+        <h3>What you're looking at</h3>
+        <div class="legend">
+          <span class="c-terrain"><i></i>terrain tiles · 13 tilemaps</span>
+          <span class="c-solid"><i class="box"></i>solid collider (1×1 tiles)</span>
+          <span class="c-trap"><i class="box"></i>trap / lava collider</span>
+          <span class="c-diamond"><i class="box"></i>diamond pickup</span>
+          <span class="c-heart"><i class="box"></i>heart pickup</span>
+          <span class="c-slow"><i class="box"></i>slow-mo pickup</span>
+          <span class="c-enemy"><i class="box"></i>enemy gunner · 20 u range</span>
+          <span class="c-joint"><i></i>hinge joint / basher</span>
+        </div>
+
+        <div class="rule"></div>
+        <h3>Physics, as coded</h3>
+        <div class="code" id="atlas-physics"></div>
+
+        <div class="rule"></div>
+        <h3>The hand-written scripts</h3>
+        <div class="code" id="atlas-scripts"></div>
+
+        <div class="rule"></div>
+        <h3>The rebuild</h3>
+        <div class="code">UnityPy   → scenes, sprites, audio
+ILSpy     → 36 C# scripts
+level.json → 13 tilemaps · 215 props
+canvas    → 0 engine runtime</div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ================= PAUSE ================= -->
+  <section class="screen modal hidden" id="pause-overlay" aria-label="Paused">
+    <div class="modal-card">
+      <p class="kicker">Paused</p>
+      <h2>TAKE A BREATH</h2>
+      <p>The cave can wait. Your diamonds are safe.</p>
+      <div class="modal-stats">
+        <div><b id="pause-diamonds">0</b><span>Diamonds</span></div>
+        <div class="rule"></div>
+        <div><b id="pause-health">10</b><span>Health</span></div>
+        <div class="rule"></div>
+        <div><b id="pause-enemies">0</b><span>Gunners left</span></div>
+      </div>
+      <div class="panel-actions">
+        <button class="unity-btn accent" id="resume-btn">RESUME</button>
+        <button class="unity-btn subtle" id="pause-controls-btn">CONTROLS</button>
+        <button class="unity-btn subtle" id="pause-atlas-btn">BEHIND THE SCENES</button>
+        <button class="unity-btn subtle" id="restart-btn">RESTART</button>
+        <button class="unity-btn subtle" id="pause-menu-btn">MAIN MENU</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= DEATH ================= -->
+  <section class="screen modal hidden" id="death-overlay" aria-label="You died">
+    <div class="modal-card death">
+      <p class="kicker">You died</p>
+      <h2>THE CAVE WINS</h2>
+      <p id="death-message">Your stickman has run out of health.</p>
+      <div class="modal-stats">
+        <div><b id="death-diamonds">0</b><span>Diamonds</span></div>
+        <div class="rule"></div>
+        <div><b id="death-kills">0</b><span>Gunners down</span></div>
+      </div>
+      <div class="panel-actions">
+        <button class="unity-btn accent" id="retry-btn">RETRY</button>
+        <button class="unity-btn subtle" id="death-menu-btn">MAIN MENU</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= WIN ================= -->
+  <section class="screen modal hidden" id="win-overlay" aria-label="All diamonds collected">
+    <div class="modal-card win">
+      <p class="kicker">All diamonds collected</p>
+      <h2>RUN COMPLETE</h2>
+      <p>You cleared the cave the way it was meant to be played — on the grapple.</p>
+      <div class="modal-stats">
+        <div><b id="win-time">0:00</b><span>Time</span></div>
+        <div class="rule"></div>
+        <div><b id="win-kills">0</b><span>Gunners down</span></div>
+        <div class="rule"></div>
+        <div><b id="win-deaths">0</b><span>Deaths</span></div>
+      </div>
+      <div class="panel-actions">
+        <button class="unity-btn accent" id="win-again-btn">RUN IT AGAIN</button>
+        <button class="unity-btn subtle" id="win-menu-btn">MAIN MENU</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script src="atlas.js"></script>
+<script src="game.js"></script>
 </body>
 </html>
