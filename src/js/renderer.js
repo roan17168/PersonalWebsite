@@ -4,9 +4,11 @@
    =================================================================== */
 
 /* -------- Render Bento Project Grid -------- */
-export function renderProjects(projects, mountId, includeContactCard = true, cardSizeOverride = null) {
+export function renderProjects(projects, mountId, includeContactCard = true, cardSizeOverride = null, options = {}) {
     const grid = document.getElementById(mountId);
     if (!grid) return;
+
+    const { buildStack = [] } = options;
 
     const contactCard = {
         id: 'contact',
@@ -21,12 +23,13 @@ export function renderProjects(projects, mountId, includeContactCard = true, car
     };
 
     const completedProjects = projects.filter(project => project.status !== 'in-progress');
-    const inProgressProjects = projects.filter(project => project.status === 'in-progress');
-    const cards = completedProjects.map(project => renderProjectCard(project, cardSizeOverride));
+    const cards = [];
 
-    if (inProgressProjects.length) {
-        cards.push(renderInProgressShelf(inProgressProjects, cardSizeOverride));
+    if (buildStack.length) {
+        cards.push(renderBuildStack(buildStack));
     }
+
+    cards.push(...completedProjects.map(project => renderProjectCard(project, cardSizeOverride)));
 
     if (includeContactCard) {
         cards.push(renderProjectCard(contactCard, cardSizeOverride));
@@ -35,28 +38,59 @@ export function renderProjects(projects, mountId, includeContactCard = true, car
     grid.innerHTML = cards.join('');
 }
 
+function renderBuildStack(projects) {
+    const count = projects.length;
+    const countLabel = count === 1 ? 'build in motion' : 'builds in motion';
+
+    return `
+        <section class="build-stack fade-in" aria-labelledby="build-stack-title">
+            <div class="build-stack-copy">
+                <span class="build-stack-eyebrow mono">// coming soon</span>
+                <h3 class="build-stack-title" id="build-stack-title">Coming to the site</h3>
+                <p class="build-stack-desc">A few builds are still taking shape. Previews open as each one ships.</p>
+                <span class="build-stack-count mono">${String(count).padStart(2, '0')} ${countLabel}</span>
+            </div>
+            <div class="build-deck" aria-hidden="true">
+                ${projects.map((project, index) => `
+                    <article class="build-slip${index === 0 ? ' is-front' : ''}" style="--rank:${index}; z-index:${count - index};">
+                        <div class="build-slip-top">
+                            <span class="build-slip-index mono">${String(index + 1).padStart(2, '0')}</span>
+                            <span class="build-slip-status mono"><i></i>${project.statusText || 'In progress'}</span>
+                        </div>
+                        <div class="build-slip-copy">
+                            <span class="build-slip-category mono">${project.category}</span>
+                            <h4 class="build-slip-title">${project.title}</h4>
+                        </div>
+                    </article>
+                `).join('')}
+            </div>
+            <ul class="build-stack-index" aria-label="Projects coming to the site">
+                ${projects.map((project, index) => `
+                    <li class="${index === 0 ? 'is-active' : ''}">
+                        <span class="mono">${String(index + 1).padStart(2, '0')}</span>${project.title}
+                    </li>
+                `).join('')}
+            </ul>
+        </section>
+    `;
+}
+
 function renderProjectCard(project, cardSizeOverride) {
     const isContact = project.type === 'contact';
     const isFeature = project.featured;
-    const isInProgress = project.status === 'in-progress';
     const classes = [
         'bento-card',
         'fade-in',
         isFeature ? 'feature' : '',
-        isContact ? 'contact-card' : '',
-        isInProgress ? 'project-in-progress' : ''
+        isContact ? 'contact-card' : ''
     ].filter(Boolean).join(' ');
 
     const href = isContact
         ? project.projectUrl
         : `project.html?id=${project.id}`;
-    const cardTag = isInProgress ? 'div' : 'a';
-    const cardAttributes = isInProgress
-        ? `role="status" aria-label="${project.title} — in progress" aria-disabled="true"`
-        : `href="${href}"`;
 
     return `
-        <${cardTag} ${cardAttributes} class="${classes}" data-size="${cardSizeOverride || project.bentoSize}" data-project-id="${project.id}">
+        <a href="${href}" class="${classes}" data-size="${cardSizeOverride || project.bentoSize}" data-project-id="${project.id}">
             <div class="card-top">
                 <span class="card-category">${project.category}</span>
                 <span class="card-year">${project.year}</span>
@@ -71,55 +105,7 @@ function renderProjectCard(project, cardSizeOverride) {
                 </div>
                 ${renderStatusBadge(project)}
             </div>
-            ${isInProgress ? renderInProgressOverlay(project) : ''}
-        </${cardTag}>
-    `;
-}
-
-function renderInProgressShelf(projects, cardSizeOverride) {
-    const countLabel = projects.length === 1 ? '1 project in progress' : `${projects.length} projects in progress`;
-    const previewProjects = projects.slice(0, 4);
-    const paperCount = previewProjects.length + (projects.length > previewProjects.length ? 1 : 0);
-    const papers = [
-        ...previewProjects.map(project => ({ title: project.title })),
-        ...(projects.length > previewProjects.length
-            ? [{ title: `+${projects.length - previewProjects.length} more` }]
-            : [])
-    ];
-
-    return `
-        <details class="in-progress-shelf" data-size="${cardSizeOverride || 'medium'}">
-            <summary class="in-progress-shelf-summary">
-                <span class="project-paper-stack" style="--paper-count: ${paperCount}; height: ${4.15 + (paperCount - 1) * 0.7}rem">
-                    ${papers.slice().reverse().map((paper, reverseIndex) => {
-                        const index = papers.length - reverseIndex - 1;
-                        const rotation = (index - 1) * 1.25;
-                        return `
-                            <span class="project-paper ${index === 0 ? 'project-paper-front' : ''}" style="--paper-index: ${index}; --paper-rotation: ${rotation}deg">
-                                <span class="project-paper-title">${paper.title}</span>
-                                ${index === 0 ? '<span class="project-paper-status mono">IN PROGRESS</span>' : ''}
-                            </span>
-                        `;
-                    }).join('')}
-                </span>
-                <span class="in-progress-shelf-copy">
-                    <span class="in-progress-shelf-title">In progress</span>
-                    <span class="in-progress-shelf-hint">${countLabel}</span>
-                </span>
-                </div>
-            </div>
-        </details>
-    `;
-}
-
-function renderInProgressOverlay(project) {
-    return `
-        <div class="progress-overlay" aria-hidden="true">
-            <span class="progress-label mono"><span></span> IN PROGRESS</span>
-            <span class="progress-title">${project.title}</span>
-            <span class="progress-message">Something is taking shape.</span>
-            <span class="progress-rule"></span>
-        </div>
+        </a>
     `;
 }
 

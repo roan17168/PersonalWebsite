@@ -28,6 +28,11 @@ export default defineConfig({
   }],
   server: {
     port: 3000,
-    open: true
+    open: true,
+    // Optional extra hosts for tunneled/preview environments, comma-separated.
+    allowedHosts: (process.env.DEV_ALLOWED_HOSTS || '')
+      .split(',')
+      .map(host => host.trim())
+      .filter(Boolean)
   }
 });

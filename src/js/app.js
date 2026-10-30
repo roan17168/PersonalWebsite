@@ -36,6 +36,7 @@ async function loadComponent(mountId, componentPath) {
                         <a href="index.html#about">About</a>
                         <a href="index.html#work">Current Projects</a>
                         <a href="index.html#past-work">Past Projects</a>
+                        <a href="index.html#coming-soon">Coming Soon</a>
                         <a href="index.html#stack">Stack</a>
                         <a href="index.html#experience">Experience</a>
                         <a href="index.html#contact">Contact</a>
@@ -127,6 +128,62 @@ function initTerminalTyping() {
     setTimeout(tick, 1500);
 }
 
+/* -------- Animated in-progress build stack -------- */
+function initBuildStack() {
+    const stack = document.querySelector('.build-stack');
+    if (!stack) return;
+
+    const slips = [...stack.querySelectorAll('.build-slip')];
+    const labels = [...stack.querySelectorAll('.build-stack-index li')];
+    if (!slips.length) return;
+
+    if (slips.length === 1) {
+        slips[0].style.setProperty('--rank', 0);
+        slips[0].style.zIndex = '1';
+        return;
+    }
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let active = 0;
+    let timer = null;
+
+    function apply(next) {
+        active = next;
+        slips.forEach((slip, index) => {
+            const rank = (index - active + slips.length) % slips.length;
+            slip.style.setProperty('--rank', rank);
+            slip.style.zIndex = String(slips.length - rank);
+            slip.classList.toggle('is-front', rank === 0);
+        });
+        labels.forEach((label, index) => {
+            label.classList.toggle('is-active', index === active);
+        });
+    }
+
+    function stop() {
+        if (timer) {
+            clearInterval(timer);
+            timer = null;
+        }
+    }
+
+    function start() {
+        stop();
+        if (reducedMotion || document.hidden) return;
+        timer = setInterval(() => apply((active + 1) % slips.length), 4200);
+    }
+
+    stack.addEventListener('mouseenter', stop);
+    stack.addEventListener('mouseleave', start);
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) stop();
+        else start();
+    });
+
+    apply(0);
+    start();
+}
+
 /* -------- Mouse-tracked card glow -------- */
 function initCardTracking() {
     document.addEventListener('mousemove', (e) => {
@@ -198,12 +255,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     });
 
+    const buildStackProjects = [...(projects || []), ...(pastProjects || [])]
+        .filter(project => project.status === 'in-progress');
+
     // Render each section independently so one failure cannot blank the rest.
-    try { if (projects) renderProjects(projects, 'project-grid'); }
+    try { renderProjects(projects || [], 'project-grid', true); }
     catch (e) { console.error('renderProjects failed:', e); }
 
     try { if (pastProjects) renderProjects(pastProjects, 'past-project-grid', false, 'small'); }
     catch (e) { console.error('renderPastProjects failed:', e); }
+
+    if (buildStackProjects.length) {
+        try {
+            renderProjects([], 'coming-soon-grid', false, null, { buildStack: buildStackProjects });
+            document.querySelector('.coming-soon')?.removeAttribute('hidden');
+        } catch (e) { console.error('renderBuildStack failed:', e); }
+    }
 
     try { if (skills) renderStack(skills, 'stack-grid'); }
     catch (e) { console.error('renderStack failed:', e); }
@@ -212,6 +279,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     catch (e) { console.error('renderExperience failed:', e); }
 
     // 4. Interactions
+    try { initBuildStack?.(); } catch (e) {}
     try { initTerminalTyping?.(); } catch (e) {}
     try { initCardTracking?.(); } catch (e) {}
     try { initIndexObserver?.(); } catch (e) {}
