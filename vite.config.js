@@ -30,9 +30,7 @@ export default defineConfig({
     port: 3000,
     open: true,
     // Optional extra hosts for tunneled/preview environments, comma-separated.
-    allowedHosts: (process.env.DEV_ALLOWED_HOSTS || '')
-      .split(',')
-      .map(host => host.trim())
-      .filter(Boolean)
+    // The preview tunnel uses a per-session host, so accept tunneled hosts in dev.
+    allowedHosts: true
   }
 });
