@@ -4,6 +4,7 @@
   "description": "Personal portfolio of Roan Detweiler-Bedell — CS @ UVM",
   "type": "module",
   "scripts": {
+    "test": "node --test",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
